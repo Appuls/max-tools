@@ -1,0 +1,83 @@
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Here>$(MSBuildThisFileDirectory)</Here>
+    <SrcDir>$(Here)src\</SrcDir>
+    <LibDir>$(Here)lib\</LibDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsDebug>$([System.Convert]::ToString( $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '[Dd]ebug'))))</IsDebug>
+    <IsRelease>$([System.Convert]::ToString( $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '[Rr]elease'))))</IsRelease>
+  </PropertyGroup>
+
+  <PropertyGroup Label="GlobalDefineConstants">
+    <DefineConstants Condition="'$(IsDebug)'">DEBUG;TRACE;</DefineConstants>
+    <DefineConstants Condition="'$(IsRelease)'">TRACE;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsDebug)'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsRelease)'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Year>2020</Year>
+    <Year Condition="'$(Configuration.Contains(2020))'">2020</Year>
+    <Year Condition="'$(Configuration.Contains(2021))'">2021</Year>
+    <YearTarget>YEAR_TARGET_$(Year)</YearTarget>
+    <DefineConstants>$(DefineConstants);$(YearTarget)</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <TargetFramework Condition="'$(Year)' == '2020'">net471</TargetFramework>
+    <TargetFramework Condition="'$(Year)' == '2021'">net48</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configurations>Debug_2020;Release_2020;Debug_2021;Release_2021</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2020'">
+    <OutputPath>bin\Debug\$(Year)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2020'">
+    <OutputPath>bin\Release\$(Year)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2021'">
+    <OutputPath>bin\Debug\$(Year)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2021'">
+    <OutputPath>bin\Release\$(Year)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="MaxProjectProperties">
+    <YearLibDir>$(LibDir)$(Year)\</YearLibDir>
+    <Autodesk_Max_dll>$(YearLibDir)Autodesk.Max.dll</Autodesk_Max_dll>
+    <Geometry3D_dll>$(YearLibDir)Geometry3D.dll</Geometry3D_dll>
+    <ManagedServices_dll>$(YearLibDir)ManagedServices.dll</ManagedServices_dll>
+    <MaxPlusDotNet_dll>$(YearLibDir)MaxPlusDotNet.dll</MaxPlusDotNet_dll>
+
+    <AppDataVim3dsMaxBridgeDir>$(LocalAppData)\VIM\3dsMaxBridge\$(Year)\</AppDataVim3dsMaxBridgeDir>
+    <MaxStartupDir>$(LocalAppData)\Autodesk\3dsMax\$(Year) - 64bit\ENU\scripts\startup\</MaxStartupDir>
+    <BootstrapScript>$(MaxStartupDir)max-tools.ms</BootstrapScript>
+  </PropertyGroup>
+
+</Project>
