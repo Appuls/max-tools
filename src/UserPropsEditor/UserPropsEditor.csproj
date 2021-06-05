@@ -4,32 +4,42 @@
     <OutputType>winexe</OutputType>
     <TargetFramework>net471</TargetFramework>
     <ApplicationIcon />
-    <OutputTypeEx>winexe</OutputTypeEx>
     <StartupObject />
+    <UseWpf>true</UseWpf>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
     <Compile Update="Properties\Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
     <Compile Update="Settings.Designer.cs" AutoGen="True" DependentUpon="Settings.settings" />
+    <None Update="MaxScript\max-tools-bootstrap.ms">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <None Update="Settings.settings" LastGenOutput="Settings.Designer.cs" Generator="SettingsSingleFileGenerator" />
-
-    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
     <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
-
     <Resource Include="assets\*.*" />
-
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MsBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.5" />
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ToolWindow.xaml.cs">
+      <DependentUpon>ToolWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
@@ -38,5 +48,9 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
   </ItemGroup> -->
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="REM Delete any previous contents in &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;if exist &quot;$(AppDataMaxToolsDir)&quot; rmdir /s /q &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;mkdir &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;copy &quot;$(TargetDir)*.*&quot; &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;&#xD;&#xA;REM Delete any previous version of &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if exist &quot;$(MaxToolsBootstrapFilePath)&quot; del &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if not exist &quot;$(MaxStartupDir)&quot; mkdir &quot;$(MaxStartupDir)&quot;&#xD;&#xA;REM Copy boostrap script and replace the __YEAR__ with the current Year.&#xD;&#xA;powershell -Command &quot;(gc '$(ProjectDir)MaxScript\$(MaxToolsBootstrapFileName)') -replace '__YEAR__', '$(Year)' | Out-File -encoding ASCII '$(OutputPath)$(MaxToolsBootstrapFileName)'&quot;&#xD;&#xA;copy &quot;$(OutputPath)$(MaxToolsBootstrapFileName)&quot; &quot;$(MaxToolsBootstrapFilePath)&quot;" />
+  </Target>
 
 </Project>

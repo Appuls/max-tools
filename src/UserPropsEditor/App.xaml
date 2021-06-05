@@ -1,9 +1,8 @@
-﻿<Application x:Class="UserPropsEditor.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:UserPropsEditor"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
-</Application>
+﻿<prism:PrismApplication
+    x:Class="UserPropsEditor.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:UserPropsEditor"
+    xmlns:prism="http://prismlibrary.com/">
+    <prism:PrismApplication.Resources />
+</prism:PrismApplication>

@@ -1,5 +1,6 @@
 # TODO
 
+- Rename to MaxToolsApp | MaxToolsAppUI because maxscript can't load an executable as an assembly.
 - Create maxscript & wpf app bootstrap
 - De-risk: react to changes in the current selection in WPF
 - Implement desired bulk edit logic:
