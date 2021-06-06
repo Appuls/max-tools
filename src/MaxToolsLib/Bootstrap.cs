@@ -1,13 +1,18 @@
-﻿namespace MaxToolsLib
+﻿using System.Threading.Tasks;
+
+namespace MaxToolsLib
 {
     public static class Bootstrap
     {
         private static MaxToolsService _maxToolsService;
 
-        private static MaxToolsService MaxToolsService
-            => _maxToolsService ?? (_maxToolsService = new MaxToolsService());
+        public static async Task<MaxToolsService> GetInstance()
+            => _maxToolsService ?? (_maxToolsService = await MaxToolsService.CreateInstance());
 
-        public static void OpenDialog()
-            => MaxToolsService.ShowDialog();
+        /// <summary>
+        /// Invoked by max-tools-bootstrap.ms
+        /// </summary>
+        public static async void OpenDialog()
+            => (await GetInstance()).ShowDialog();
     }
 }

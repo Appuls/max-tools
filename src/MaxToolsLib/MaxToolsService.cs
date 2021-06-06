@@ -14,25 +14,38 @@ namespace MaxToolsLib
     public class MaxToolsService : IMaxToolsService
     {
         private App _app;
-        private readonly Dispatcher _maxDispatcher;
-        private readonly Thread _wpfThread;
+        private Dispatcher _maxDispatcher;
+        private Thread _wpfThread;
+        private TaskCompletionSource<bool> _windowAttached;
 
         public event EventHandler OnSelectionChanged;
         public OnInitializedBehavior OnInitializedBehavior => OnInitializedBehavior.None;
         public OnClosingBehavior OnClosingBehavior => OnClosingBehavior.Hide;
 
-        public MaxToolsService()
+        private MaxToolsService()
         {
-            _maxDispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            _windowAttached = new TaskCompletionSource<bool>();
 
+            _maxDispatcher = Dispatcher.FromThread(Thread.CurrentThread);
             _wpfThread = new Thread(() =>
             {
                 _app = new App(this);
                 Dispatcher.Run();
             });
+
             _wpfThread.SetApartmentState(ApartmentState.STA);
             _wpfThread.IsBackground = true;
             _wpfThread.Start();
+        }
+
+        private Task WaitForAttached()
+            => _windowAttached.Task;
+
+        public static async Task<MaxToolsService> CreateInstance()
+        {
+            var service = new MaxToolsService();
+            await service.WaitForAttached();
+            return service;
         }
 
         public void AttachOwnerWindow(Window window)
@@ -40,6 +53,7 @@ namespace MaxToolsLib
             var windowHandle = new System.Windows.Interop.WindowInteropHelper(window);
             windowHandle.Owner = ManagedServices.AppSDK.GetMaxHWND();
             ManagedServices.AppSDK.ConfigureWindowForMax(window);
+            _windowAttached.SetResult(true);
         }
 
         public void ShowDialog()

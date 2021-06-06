@@ -29,7 +29,7 @@ namespace MaxToolsUi
         { }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
-            => containerRegistry.RegisterInstance(typeof(StubMaxToolsService), MaxToolsService);
+            => containerRegistry.RegisterInstance(typeof(IMaxToolsService), MaxToolsService);
 
         protected override void OnInitialized()
         {

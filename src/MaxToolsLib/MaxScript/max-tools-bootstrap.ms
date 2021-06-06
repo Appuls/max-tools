@@ -18,7 +18,9 @@ tooltip: \"Open MaxTools\"
 )
 "
 
-if menuMan.registerMenuContext 0x572418f3 then
+execute macroCode
+
+if menuMan.registerMenuContext 0xf1c22777 then
 (
     local topBar = menuMan.getMainMenuBar()
     local maxToolsMenu = menuMan.createMenu "MaxTools"
