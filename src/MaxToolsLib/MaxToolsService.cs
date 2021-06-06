@@ -6,8 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Autodesk.Max.MaxPlus;
 using MaxToolsUi;
 using MaxToolsUi.Services;
+using Environment = System.Environment;
+using INode = Autodesk.Max.Plugins.INode;
 
 namespace MaxToolsLib
 {
@@ -18,7 +21,7 @@ namespace MaxToolsLib
         private Thread _wpfThread;
         private TaskCompletionSource<bool> _windowAttached;
 
-        public event EventHandler OnSelectionChanged;
+        public event EventHandler<SelectionChangedEventArgs> OnSelectionChanged;
         public OnInitializedBehavior OnInitializedBehavior => OnInitializedBehavior.None;
         public OnClosingBehavior OnClosingBehavior => OnClosingBehavior.Hide;
 
@@ -56,10 +59,67 @@ namespace MaxToolsLib
             _windowAttached.SetResult(true);
         }
 
-        public void ShowDialog()
-            => _app.Dispatcher.BeginInvoke((Action)(() => _app.ShowDialog()));
+        public void ObserveSelectionChanged(bool enabled)
+            => RunOnMaxThread(() => Core.ExecuteMAXScript($"maxTools_observeSelectionChanged {enabled}"));
 
-        public Task RunOnMaxThread(Action action)
-            => _maxDispatcher?.InvokeAsync(action).Task;
+        public void RunOnWpfThread(Action action)
+            => _app.Dispatcher.BeginInvoke(action);
+
+        public void RunOnMaxThread(Action action)
+            //=> _maxDispatcher?.InvokeAsync(action).Task;
+            => _maxDispatcher.Invoke(action);
+
+        public void ShowDialog()
+            => RunOnWpfThread(() => _app.ShowDialog());
+
+        private static readonly IReadOnlyList<(string, string)> DefaultProps = new (string,string)[] {};
+
+        public static IReadOnlyList<(string, string)> GetProperties(Autodesk.Max.MaxPlus.INode node)
+        {
+            var buffer = new WStr();
+            node.GetUserPropBuffer(buffer);
+            var rawProperties = buffer.Contents();
+
+            if (string.IsNullOrEmpty(rawProperties))
+            {
+                return DefaultProps;
+            }
+
+            // Split the lines.
+            var lines = rawProperties.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+            {
+                return DefaultProps;
+            }
+
+            // Split each token.
+            return lines.Select(l =>
+            {
+                var tokens = l.Split(new []{ '=' }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToArray();
+                
+                switch (tokens.Length)
+                {
+                    case 0:
+                        return ("", "");
+                    case 1:
+                        return (tokens[0], "");
+                    case 2:
+                        return (tokens[0], tokens[1]);
+                    default:
+                        return (tokens[0], string.Join("=", tokens.Skip(1)));
+                }
+            }).ToList();
+        }
+
+        public void HandleSelectionChanged()
+        {
+            var selection = SelectionManager.Nodes.ToList();
+            var nodeInfo = selection.Select(n =>
+            {
+                return new NodeInfo(n.Name, GetProperties(n));
+            });
+
+            OnSelectionChanged?.Invoke(this, new Event);
+        }
     }
 }

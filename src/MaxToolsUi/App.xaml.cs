@@ -1,8 +1,6 @@
-﻿
-using Prism.Ioc;
+﻿using Prism.Ioc;
 using Prism.Unity;
 using System.Windows;
-using System.Windows.Threading;
 using MaxToolsUi.Services;
 using MaxToolsUi.Views;
 

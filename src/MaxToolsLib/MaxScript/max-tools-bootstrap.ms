@@ -5,8 +5,20 @@ assemblyPath = appData + @"\MaxTools\__YEAR__\MaxToolsLib.dll"
 dotNet.loadAssembly assemblyPath
 bootstrap = dotNetClass "MaxToolsLib.Bootstrap"
 
-fn openDialog = (
+fn maxTools_openDialog = (
     bootstrap.OpenDialog()
+)
+
+fn maxTools_handleSelectionChanged = (
+    bootstrap.HandleSelectionChanged()
+)
+
+fn maxTools_observeSelectionChanged enabled = (
+   if enabled then (
+       callbacks.addScript #selectionSetChanged "maxTools_handleSelectionChanged()" id:#maxTools_selection_observer
+   ) else (
+       callbacks.removeScripts id:#maxTools_selection_observer
+   )
 )
 
 macroCode = "macroScript MaxTools_Open

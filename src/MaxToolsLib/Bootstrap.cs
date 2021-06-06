@@ -14,5 +14,8 @@ namespace MaxToolsLib
         /// </summary>
         public static async void OpenDialog()
             => (await GetInstance()).ShowDialog();
+
+        public static async void HandleSelectionChanged()
+            => (await GetInstance()).HandleSelectionChanged();
     }
 }
