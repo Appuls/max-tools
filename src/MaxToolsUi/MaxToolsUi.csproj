@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <OutputType>winexe</OutputType>
-    <TargetFramework>net471</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
     <UseWpf>true</UseWpf>
@@ -37,20 +36,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\ToolWindow.xaml.cs">
-      <DependentUpon>ToolWindow.xaml</DependentUpon>
+    <Compile Update="Views\MaxToolsWindow.xaml.cs">
+      <DependentUpon>MaxToolsWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
-  <!-- <ItemGroup>
-    <None Update="Views\BridgeWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-  </ItemGroup> -->
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="REM Delete any previous contents in &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;if exist &quot;$(AppDataMaxToolsDir)&quot; rmdir /s /q &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;mkdir &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;copy &quot;$(TargetDir)*.*&quot; &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;&#xD;&#xA;REM Delete any previous version of &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if exist &quot;$(MaxToolsBootstrapFilePath)&quot; del &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if not exist &quot;$(MaxStartupDir)&quot; mkdir &quot;$(MaxStartupDir)&quot;&#xD;&#xA;REM Copy boostrap script and replace the __YEAR__ with the current Year.&#xD;&#xA;powershell -Command &quot;(gc '$(ProjectDir)MaxScript\$(MaxToolsBootstrapFileName)') -replace '__YEAR__', '$(Year)' | Out-File -encoding ASCII '$(OutputPath)$(MaxToolsBootstrapFileName)'&quot;&#xD;&#xA;copy &quot;$(OutputPath)$(MaxToolsBootstrapFileName)&quot; &quot;$(MaxToolsBootstrapFilePath)&quot;" />
-  </Target>
 
 </Project>

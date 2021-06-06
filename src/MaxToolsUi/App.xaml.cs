@@ -3,50 +3,44 @@ using Prism.Ioc;
 using Prism.Unity;
 using System.Windows;
 using System.Windows.Threading;
-using UserPropsEditor.Services;
-using UserPropsEditor.Views;
+using MaxToolsUi.Services;
+using MaxToolsUi.Views;
 
-namespace UserPropsEditor
+namespace MaxToolsUi
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : PrismApplication
     {
-        public readonly MaxService MaxService;
+        public readonly IMaxToolsService MaxToolsService;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public App(MaxService maxService)
-            => MaxService= maxService;
+        public App(IMaxToolsService maxToolsService)
+            => MaxToolsService= maxToolsService;
 
         /// <summary>
         /// Constructor used for stub testing.
         /// </summary>
-        private App()
-            : this(new MaxService(OnInitializedBehavior.ShowDialog, true))
+        public App()
+            : this(new StubMaxToolsService())
         { }
 
-        /// <summary>
-        /// Invoked by max-tools-bootstrap.ms
-        /// </summary>
-        public static App Create()
-            => new App(new MaxService(OnInitializedBehavior.None, false));
-
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
-            => containerRegistry.RegisterInstance(typeof(MaxService), MaxService);
+            => containerRegistry.RegisterInstance(typeof(StubMaxToolsService), MaxToolsService);
 
         protected override void OnInitialized()
         {
-            if (MaxService.OnInitializedBehavior == OnInitializedBehavior.ShowDialog)
+            if (MaxToolsService.OnInitializedBehavior == OnInitializedBehavior.ShowDialog)
             {
                 MainWindow?.ShowDialog();
             }
         }
 
         protected override Window CreateShell()
-            => ContainerLocator.Container.Resolve<ToolWindow>();
+            => ContainerLocator.Container.Resolve<MaxToolsWindow>();
 
         public bool? ShowDialog()
             => MainWindow?.ShowDialog();

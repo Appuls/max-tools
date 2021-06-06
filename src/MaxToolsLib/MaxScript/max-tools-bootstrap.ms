@@ -1,12 +1,12 @@
 ﻿systemEnvironment = dotNetClass "System.Environment"
 specialFolder = dotNetClass "System.Environment+specialFolder"
 appData = systemEnvironment.getfolderPath specialFolder.localApplicationData
-assemblyPath = appData + @"\MaxTools\__YEAR__\UserPropsEditor.exe"
+assemblyPath = appData + @"\MaxTools\__YEAR__\MaxToolsLib.dll"
 dotNet.loadAssembly assemblyPath
-app = dotNetClass "UserPropsEditor.App"
+bootstrap = dotNetClass "MaxToolsLib.Bootstrap"
 
 fn openDialog = (
-    app.Create()
+    bootstrap.OpenDialog()
 )
 
 macroCode = "macroScript MaxTools_Open

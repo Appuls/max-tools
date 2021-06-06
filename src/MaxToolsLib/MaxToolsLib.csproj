@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Autodesk.Max">
+        <HintPath>$(Autodesk_Max_dll)</HintPath>
+        <Private>False</Private>
+    </Reference>
+      <Reference Include="ManagedServices">
+        <HintPath>$(ManagedServices_dll)</HintPath>
+        <Private>False</Private>
+    </Reference>
+    <Reference Include="MaxPlusDotNet">
+        <HintPath>$(MaxPlusDotNet_dll)</HintPath>
+        <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaxToolsUi\MaxToolsUi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="MaxScript\max-tools-bootstrap.ms"/>
+  </ItemGroup>
+
+  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="REM Delete any previous contents in &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;if exist &quot;$(AppDataMaxToolsDir)&quot; rmdir /s /q &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;mkdir &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;copy &quot;$(TargetDir)*.*&quot; &quot;$(AppDataMaxToolsDir)&quot;&#xD;&#xA;&#xD;&#xA;REM Delete any previous version of &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if exist &quot;$(MaxToolsBootstrapFilePath)&quot; del &quot;$(MaxToolsBootstrapFilePath)&quot;&#xD;&#xA;if not exist &quot;$(MaxStartupDir)&quot; mkdir &quot;$(MaxStartupDir)&quot;&#xD;&#xA;REM Copy boostrap script and replace the __YEAR__ with the current Year.&#xD;&#xA;powershell -Command &quot;(gc '$(ProjectDir)MaxScript\$(MaxToolsBootstrapFileName)') -replace '__YEAR__', '$(Year)' | Out-File -encoding ASCII '$(OutputPath)$(MaxToolsBootstrapFileName)'&quot;&#xD;&#xA;copy &quot;$(OutputPath)$(MaxToolsBootstrapFileName)&quot; &quot;$(MaxToolsBootstrapFilePath)&quot;" />
+  </Target>
+
+</Project>

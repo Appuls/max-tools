@@ -3,12 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPropsEditor", "src\UserPropsEditor\UserPropsEditor.csproj", "{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA63B6EE-1467-4E31-BCED-37D236A5F5B8}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
+		TODO.md = TODO.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaxToolsLib", "src\MaxToolsLib\MaxToolsLib.csproj", "{1F353C7C-BB74-435B-8445-92CC7A3EA33A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaxToolsUi", "src\MaxToolsUi\MaxToolsUi.csproj", "{D8473459-0F58-4CA5-91C5-5D5744189265}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +23,22 @@ Global
 		Release_2021|Any CPU = Release_2021|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Debug_2020|Any CPU.ActiveCfg = Debug_2020|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Debug_2020|Any CPU.Build.0 = Debug_2020|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Debug_2021|Any CPU.ActiveCfg = Debug_2021|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Debug_2021|Any CPU.Build.0 = Debug_2021|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Release_2020|Any CPU.ActiveCfg = Release_2020|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Release_2020|Any CPU.Build.0 = Release_2020|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Release_2021|Any CPU.ActiveCfg = Release_2021|Any CPU
-		{8DF4FC4C-D6DB-47A0-8AB9-6CC744F80637}.Release_2021|Any CPU.Build.0 = Release_2021|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Debug_2020|Any CPU.ActiveCfg = Debug_2020|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Debug_2020|Any CPU.Build.0 = Debug_2020|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Debug_2021|Any CPU.ActiveCfg = Debug_2021|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Debug_2021|Any CPU.Build.0 = Debug_2021|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Release_2020|Any CPU.ActiveCfg = Release_2020|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Release_2020|Any CPU.Build.0 = Release_2020|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Release_2021|Any CPU.ActiveCfg = Release_2021|Any CPU
+		{1F353C7C-BB74-435B-8445-92CC7A3EA33A}.Release_2021|Any CPU.Build.0 = Release_2021|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Debug_2020|Any CPU.ActiveCfg = Debug_2020|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Debug_2020|Any CPU.Build.0 = Debug_2020|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Debug_2021|Any CPU.ActiveCfg = Debug_2021|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Debug_2021|Any CPU.Build.0 = Debug_2021|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Release_2020|Any CPU.ActiveCfg = Release_2020|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Release_2020|Any CPU.Build.0 = Release_2020|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Release_2021|Any CPU.ActiveCfg = Release_2021|Any CPU
+		{D8473459-0F58-4CA5-91C5-5D5744189265}.Release_2021|Any CPU.Build.0 = Release_2021|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
