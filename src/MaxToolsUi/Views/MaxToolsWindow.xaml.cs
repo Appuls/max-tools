@@ -35,12 +35,21 @@ namespace MaxToolsUi.Views
             SubscribeToEvents();
         }
 
+        protected override void OnActivated(EventArgs _)
+            => _maxToolsService.ObserveSelectionChanged(true);
+
+        private void InnerHide()
+        {
+            _maxToolsService.ObserveSelectionChanged(false);
+            Hide();
+        }
+
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             if (_maxToolsService.OnClosingBehavior == OnClosingBehavior.Hide)
             {
                 e.Cancel = true;
-                Hide();
+                InnerHide();
             }
         }
 
@@ -48,7 +57,7 @@ namespace MaxToolsUi.Views
         {
             if (_maxToolsService.OnClosingBehavior == OnClosingBehavior.Hide)
             {
-                Hide();
+                InnerHide();
             }
             else
             {

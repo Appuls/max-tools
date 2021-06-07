@@ -1,6 +1,5 @@
 # TODO
 
-- De-risk: react to changes in the current selection in WPF
 - Implement desired bulk edit logic:
 ```
 CURRENT SELECTION PROPERTIES

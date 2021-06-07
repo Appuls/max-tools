@@ -17,9 +17,10 @@ namespace MaxToolsLib
     public class MaxToolsService : IMaxToolsService
     {
         private App _app;
-        private Dispatcher _maxDispatcher;
-        private Thread _wpfThread;
-        private TaskCompletionSource<bool> _windowAttached;
+        private readonly Dispatcher _maxDispatcher;
+        private readonly Thread _wpfThread;
+        private readonly TaskCompletionSource<bool> _windowAttached;
+        private bool _isObservingSelectionChanged = false;
 
         public event EventHandler<SelectionChangedEventArgs> OnSelectionChanged;
         public OnInitializedBehavior OnInitializedBehavior => OnInitializedBehavior.None;
@@ -59,15 +60,20 @@ namespace MaxToolsLib
             _windowAttached.SetResult(true);
         }
 
-        public void ObserveSelectionChanged(bool enabled)
-            => RunOnMaxThread(() => Core.ExecuteMAXScript($"maxTools_observeSelectionChanged {enabled}"));
+        public async void ObserveSelectionChanged(bool enabled)
+        {
+            if (enabled && _isObservingSelectionChanged)
+                return;
 
-        public void RunOnWpfThread(Action action)
-            => _app.Dispatcher.BeginInvoke(action);
+            await RunOnMaxThread(() => Core.ExecuteMAXScript($"maxTools_observeSelectionChanged {enabled}"));
+            _isObservingSelectionChanged = enabled;
+        }
 
-        public void RunOnMaxThread(Action action)
-            //=> _maxDispatcher?.InvokeAsync(action).Task;
-            => _maxDispatcher.Invoke(action);
+        public Task RunOnWpfThread(Action action)
+            => _app.Dispatcher.InvokeAsync(action).Task;
+
+        public Task RunOnMaxThread(Action action)
+            => _maxDispatcher?.InvokeAsync(action).Task;
 
         public void ShowDialog()
             => RunOnWpfThread(() => _app.ShowDialog());
@@ -114,12 +120,8 @@ namespace MaxToolsLib
         public void HandleSelectionChanged()
         {
             var selection = SelectionManager.Nodes.ToList();
-            var nodeInfo = selection.Select(n =>
-            {
-                return new NodeInfo(n.Name, GetProperties(n));
-            });
-
-            OnSelectionChanged?.Invoke(this, new Event);
+            var nodeInfo = selection.Select(n => new NodeInfo(n.Name, GetProperties(n))).ToList();
+            RunOnWpfThread(() => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(nodeInfo)));
         }
     }
 }

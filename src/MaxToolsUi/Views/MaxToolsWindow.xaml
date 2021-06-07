@@ -7,13 +7,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
-    Title="User Property Editor"
+    Title="MaxTools"
     Width="Auto"
     Height="Auto"
     prism:ViewModelLocator.AutoWireViewModel="True"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
-    <Grid>
+
+    <StackPanel Orientation="Vertical">
         <TextBlock>Hi :)!</TextBlock>
-    </Grid>
+        <ItemsControl
+            Margin="0,0,0,10"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            ItemsSource="{Binding NodeInfos}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Name}" />
+                        <ItemsControl
+                            Margin="5"
+                            HorizontalContentAlignment="Stretch"
+                            AlternationCount="2"
+                            ItemsSource="{Binding Properties}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel x:Name="InnerStackPanel" Orientation="Horizontal">
+                                        <TextBlock
+                                            Padding="0,0,10,0"
+                                            Text="{Binding Name}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            Padding="0,0,10,0"
+                                            Text="{Binding Value}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </Window>

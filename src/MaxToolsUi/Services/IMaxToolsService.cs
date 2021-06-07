@@ -20,12 +20,12 @@ namespace MaxToolsUi.Services
 
     public class NodeInfo
     {
-        public readonly string NodeName;
+        public readonly string Name;
         public readonly IReadOnlyList<(string, string)> Properties;
 
-        public NodeInfo(string nodeName, IReadOnlyList<(string, string)> properties)
+        public NodeInfo(string name, IReadOnlyList<(string, string)> properties)
         {
-            NodeName = nodeName;
+            Name = name;
             Properties = properties;
         }
     }
@@ -40,10 +40,11 @@ namespace MaxToolsUi.Services
 
     public interface IMaxToolsService
     {
-        event EventHandler OnSelectionChanged;
+        event EventHandler<SelectionChangedEventArgs> OnSelectionChanged;
         OnInitializedBehavior OnInitializedBehavior { get; }
         OnClosingBehavior OnClosingBehavior { get; }
         void AttachOwnerWindow(Window window);
-        void RunOnMaxThread(Action action);
+        Task RunOnMaxThread(Action action);
+        void ObserveSelectionChanged(bool enabled);
     }
 }
