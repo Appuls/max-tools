@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\PropertyEntryUC.xaml.cs">
+      <DependentUpon>PropertyEntryUC.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MaxToolsWindow.xaml.cs">
       <DependentUpon>MaxToolsWindow.xaml</DependentUpon>
     </Compile>

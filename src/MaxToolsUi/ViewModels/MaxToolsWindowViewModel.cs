@@ -5,38 +5,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MaxToolsUi.Services;
+using Prism.Commands;
 using Prism.Events;
 
 namespace MaxToolsUi.ViewModels
 {
-    public class MutableProperty
+    public class PropertyEntry
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public const string VariesCandidate = "Varies...";
 
-        public MutableProperty(string name, string value)
+        public string EntryName { get; }
+        public ObservableCollection<string> CandidateValues { get; } = new ObservableCollection<string>();
+
+        public PropertyEntry(string entryName, IReadOnlyList<string> candidateValues)
         {
-            Name = name;
-            Value = value;
-        }
-    }
-
-    public class MutableNodeInfo
-    {
-        public string Name { get; set; }
-        public ObservableCollection<MutableProperty> Properties { get; } = new ObservableCollection<MutableProperty>();
-
-        public MutableNodeInfo(NodeInfo nodeInfo)
-        {
-            Name = nodeInfo.Name;
-            Properties.AddRange(nodeInfo.Properties.Select(p => new MutableProperty(p.Item1, p.Item2)));
+            EntryName = entryName;
+            
+            if (candidateValues.Count > 1)
+            {
+                CandidateValues.Add(VariesCandidate);
+            }
+            CandidateValues.AddRange(candidateValues);
         }
     }
 
     public class MaxToolsWindowViewModel
     {
         private readonly IMaxToolsService _maxToolsService;
-        public ObservableCollection<MutableNodeInfo> NodeInfos { get; } = new ObservableCollection<MutableNodeInfo>();
+        private readonly List<NodeInfo> _nodeInfos = new List<NodeInfo>();
+        public ObservableCollection<PropertyEntry> PropertyEntries { get; } = new ObservableCollection<PropertyEntry>();
 
         public MaxToolsWindowViewModel(IMaxToolsService maxToolsService)
         {
@@ -44,10 +41,48 @@ namespace MaxToolsUi.ViewModels
             SubscribeToEvents();
         }
 
+        private DelegateCommand<string> _removeCommand;
+
+        public DelegateCommand<string> RemoveCommand
+            => _removeCommand ?? (_removeCommand = new DelegateCommand<string>(RemoveCommandExecute));
+
+        private void RemoveCommandExecute(string entryName)
+        {
+            // TODO
+        }
+
+        private DelegateCommand<string> _selectCommand;
+
+        public DelegateCommand<string> SelectCommand
+            => _selectCommand ?? (_selectCommand = new DelegateCommand<string>(SelectCommandExecute));
+
+        private void SelectCommandExecute(string entryName)
+        {
+            // TODO
+        }
+
+        private DelegateCommand<string> _addToSelectionCommand;
+
+        public DelegateCommand<string> AddToSelectionCommand
+            => _addToSelectionCommand ?? (_addToSelectionCommand = new DelegateCommand<string>(AddToSelectionCommandExecute));
+
+        private void AddToSelectionCommandExecute(string entryName)
+        {
+            // TODO
+        }
+
         private void HandleSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            NodeInfos.Clear();
-            NodeInfos.AddRange(args.NodeInfo.Select(n => new MutableNodeInfo(n)));
+            _nodeInfos.Clear();
+            _nodeInfos.AddRange(args.NodeInfo);
+
+            PropertyEntries.Clear();
+            var propEntries = _nodeInfos
+                .SelectMany(n => n.Properties)
+                .GroupBy(t => t.entryName)
+                .Select(g => new PropertyEntry(g.Key, g.Select(t => t.value).Distinct().OrderBy(v => v).ToArray()))
+                .OrderBy(p => p.EntryName);
+            PropertyEntries.AddRange(propEntries);
         }
 
         public void SubscribeToEvents()

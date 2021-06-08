@@ -1,8 +1,18 @@
 # TODO
 
-- Implement desired bulk edit logic:
+- Use stub to implement bulk editing logic
+  - Serve dummy NodeInfos
+  - View dummy NodeInfos (live results)
+  - Edit dummy PropertyEntry
+  - Remove dummy PropertyEntry
+  - Add dummy PropertyEntry
+- Apply stub logic to Max operations
+- Finesse UI
+
 ```
 CURRENT SELECTION PROPERTIES
+
+(disabled when selection is empty)
 
 [x] name   value|"varies":dropdown   [select] <-- shift-clicking adds to selection, x button removes
 
@@ -10,11 +20,15 @@ CURRENT SELECTION PROPERTIES
 
 ADD PROPERTY
 
+(disabled when selection is empty)
+
 [+] [name] [value] <-- adding overwrites existing values
 
 ------------------------
 
 EXPORT TO CSV
+
+(disabled when selection is empty)
 
 # items selected   [Export] <-- exports current selection to CSV with user data
 

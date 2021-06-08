@@ -21,7 +21,7 @@ namespace MaxToolsUi.Services
     public class NodeInfo
     {
         public readonly string Name;
-        public readonly IReadOnlyList<(string, string)> Properties;
+        public readonly IReadOnlyList<(string entryName, string value)> Properties;
 
         public NodeInfo(string name, IReadOnlyList<(string, string)> properties)
         {
