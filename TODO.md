@@ -1,8 +1,6 @@
 # TODO
 
 - Use stub to implement bulk editing logic
-  - Serve dummy NodeInfos
-  - View dummy NodeInfos (live results)
   - Edit dummy PropertyEntry
   - Remove dummy PropertyEntry
   - Add dummy PropertyEntry
