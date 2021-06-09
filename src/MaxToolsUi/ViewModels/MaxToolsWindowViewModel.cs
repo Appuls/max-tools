@@ -12,14 +12,14 @@ namespace MaxToolsUi.ViewModels
 {
     public class PropertyEntry
     {
-        public const string VariesCandidate = "Varies...";
+        public const string VariesCandidate = "[Varies]";
 
-        public string EntryName { get; }
+        public string Name { get; }
         public ObservableCollection<string> CandidateValues { get; } = new ObservableCollection<string>();
 
-        public PropertyEntry(string entryName, IReadOnlyList<string> candidateValues)
+        public PropertyEntry(string name, IReadOnlyList<string> candidateValues)
         {
-            EntryName = entryName;
+            Name = name;
             
             if (candidateValues.Count > 1)
             {
@@ -32,8 +32,9 @@ namespace MaxToolsUi.ViewModels
     public class MaxToolsWindowViewModel
     {
         private readonly IMaxToolsService _maxToolsService;
-        private readonly List<NodeInfo> _nodeInfos = new List<NodeInfo>();
+        public ObservableCollection<NodeInfo> NodeInfos { get; } = new ObservableCollection<NodeInfo>();
         public ObservableCollection<PropertyEntry> PropertyEntries { get; } = new ObservableCollection<PropertyEntry>();
+        public bool IsStub => _maxToolsService.IsStub;
 
         public MaxToolsWindowViewModel(IMaxToolsService maxToolsService)
         {
@@ -71,17 +72,29 @@ namespace MaxToolsUi.ViewModels
             // TODO
         }
 
+        private DelegateCommand _stubCommand;
+
+        public DelegateCommand StubCommand
+            => _stubCommand ?? (_stubCommand = new DelegateCommand(StubCommandExecute));
+
+        private void StubCommandExecute()
+        {
+            if (!(_maxToolsService is StubMaxToolsService stubService))
+                return;
+            stubService.FireStubSelection();
+        }
+
         private void HandleSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            _nodeInfos.Clear();
-            _nodeInfos.AddRange(args.NodeInfo);
+            NodeInfos.Clear();
+            NodeInfos.AddRange(args.NodeInfo);
 
             PropertyEntries.Clear();
-            var propEntries = _nodeInfos
+            var propEntries = NodeInfos
                 .SelectMany(n => n.Properties)
-                .GroupBy(t => t.entryName)
-                .Select(g => new PropertyEntry(g.Key, g.Select(t => t.value).Distinct().OrderBy(v => v).ToArray()))
-                .OrderBy(p => p.EntryName);
+                .GroupBy(t => t.Name)
+                .Select(g => new PropertyEntry(g.Key, g.Select(t => t.Value).Distinct().OrderBy(v => v).ToArray()))
+                .OrderBy(p => p.Name);
             PropertyEntries.AddRange(propEntries);
         }
 

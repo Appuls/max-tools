@@ -14,24 +14,60 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
-
+    <Window.Resources>
+        <ResourceDictionary Source="/MaxToolsUi;component/MaxToolsStyle.xaml" />
+    </Window.Resources>
     <StackPanel Width="450" Orientation="Vertical">
-        <TextBlock>Common Properties</TextBlock>
+
+        <Grid>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Common Properties</TextBlock>
+            <Button
+                Width="50"
+                Height="Auto"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding StubCommand}"
+                Content="Stub"
+                Visibility="{Binding IsStub, Converter={StaticResource B2VC}}" />
+        </Grid>
         <ItemsControl
-            Margin="0,0,0,10"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             ItemsSource="{Binding PropertyEntries}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <controls:PropertyEntryUC
-                        AddToSelectionCommand="{Binding Path=AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                        AddToSelectionCommand="{Binding DataContext.AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         CandidateValues="{Binding CandidateValues}"
-                        EntryName="{Binding EntryName}"
-                        RemoveCommand="{Binding Path=RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        SelectCommand="{Binding Path=SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                        EntryName="{Binding Name}"
+                        RemoveCommand="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                        SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <StackPanel Visibility="{Binding IsStub, Converter={StaticResource B2VC}}">
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeInfos</TextBlock>
+            <ItemsControl
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ItemsSource="{Binding NodeInfos}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Name}" />
+                            <ItemsControl Margin="5,0" ItemsSource="{Binding Properties}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock><Run Text="{Binding Name, Mode=OneWay}" /><Run Text=" = " /><Run Text="{Binding Value, Mode=OneWay}" /></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
     </StackPanel>
 </Window>

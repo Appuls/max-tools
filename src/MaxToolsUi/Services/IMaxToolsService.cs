@@ -18,15 +18,27 @@ namespace MaxToolsUi.Services
         Hide,
     }
 
-    public class NodeInfo
+    public class PropertyInfo
     {
-        public readonly string Name;
-        public readonly IReadOnlyList<(string entryName, string value)> Properties;
+        public string Name { get; }
+        public string Value { get; }
 
-        public NodeInfo(string name, IReadOnlyList<(string, string)> properties)
+        public PropertyInfo(string name, string value)
         {
             Name = name;
-            Properties = properties;
+            Value = value;
+        }
+    }
+
+    public class NodeInfo
+    {
+        public string Name { get; }
+        public IReadOnlyList<PropertyInfo> Properties { get; }
+
+        public NodeInfo(string name, IReadOnlyList<PropertyInfo> properties)
+        {
+            Name = name;
+            Properties = properties ?? new List<PropertyInfo>();
         }
     }
 
@@ -40,6 +52,7 @@ namespace MaxToolsUi.Services
 
     public interface IMaxToolsService
     {
+        bool IsStub { get; }
         event EventHandler<SelectionChangedEventArgs> OnSelectionChanged;
         OnInitializedBehavior OnInitializedBehavior { get; }
         OnClosingBehavior OnClosingBehavior { get; }

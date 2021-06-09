@@ -22,6 +22,8 @@ namespace MaxToolsLib
         private readonly TaskCompletionSource<bool> _windowAttached;
         private bool _isObservingSelectionChanged = false;
 
+        public bool IsStub => false;
+
         public event EventHandler<SelectionChangedEventArgs> OnSelectionChanged;
         public OnInitializedBehavior OnInitializedBehavior => OnInitializedBehavior.None;
         public OnClosingBehavior OnClosingBehavior => OnClosingBehavior.Hide;
@@ -78,9 +80,9 @@ namespace MaxToolsLib
         public void ShowDialog()
             => RunOnWpfThread(() => _app.ShowDialog());
 
-        private static readonly IReadOnlyList<(string, string)> DefaultProps = new (string,string)[] {};
+        private static readonly IReadOnlyList<PropertyInfo> DefaultProps = new PropertyInfo[] {};
 
-        public static IReadOnlyList<(string, string)> GetProperties(Autodesk.Max.MaxPlus.INode node)
+        public static IReadOnlyList<PropertyInfo> GetProperties(Autodesk.Max.MaxPlus.INode node)
         {
             var buffer = new WStr();
             node.GetUserPropBuffer(buffer);
@@ -106,13 +108,13 @@ namespace MaxToolsLib
                 switch (tokens.Length)
                 {
                     case 0:
-                        return ("", "");
+                        return new PropertyInfo("", "");
                     case 1:
-                        return (tokens[0], "");
+                        return new PropertyInfo(tokens[0], "");
                     case 2:
-                        return (tokens[0], tokens[1]);
+                        return new PropertyInfo(tokens[0], tokens[1]);
                     default:
-                        return (tokens[0], string.Join("=", tokens.Skip(1)));
+                        return new PropertyInfo(tokens[0], string.Join("=", tokens.Skip(1)));
                 }
             }).ToList();
         }
