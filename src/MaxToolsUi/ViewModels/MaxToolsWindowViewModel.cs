@@ -14,13 +14,15 @@ namespace MaxToolsUi.ViewModels
     {
         public const string VariesCandidate = "[Varies]";
 
+        public string Guid { get; }
         public string Name { get; }
         public ObservableCollection<string> CandidateValues { get; } = new ObservableCollection<string>();
 
         public PropertyEntry(string name, IReadOnlyList<string> candidateValues)
         {
+            Guid = System.Guid.NewGuid().ToString();
             Name = name;
-            
+
             if (candidateValues.Count > 1)
             {
                 CandidateValues.Add(VariesCandidate);
@@ -42,14 +44,29 @@ namespace MaxToolsUi.ViewModels
             SubscribeToEvents();
         }
 
+        public PropertyEntry GetPropertyEntry(string guid)
+            => PropertyEntries.FirstOrDefault(p => p.Guid == guid);
+
         private DelegateCommand<string> _removeCommand;
 
         public DelegateCommand<string> RemoveCommand
             => _removeCommand ?? (_removeCommand = new DelegateCommand<string>(RemoveCommandExecute));
 
-        private void RemoveCommandExecute(string entryName)
+        private void RemoveCommandExecute(string guid)
         {
-            // TODO
+            var propertyEntry = GetPropertyEntry(guid);
+            if (propertyEntry == null)
+                return;
+
+            PropertyEntries.Remove(propertyEntry);
+
+            foreach (var n in NodeInfos)
+            {
+                var toRemove = n.Properties.FirstOrDefault(p => p.Name == propertyEntry.Name);
+                if (toRemove == null)
+                    continue;
+                n.Properties.Remove(toRemove);
+            }
         }
 
         private DelegateCommand<string> _selectCommand;
@@ -60,6 +77,39 @@ namespace MaxToolsUi.ViewModels
         private void SelectCommandExecute(string entryName)
         {
             // TODO
+        }
+
+        public class ValueChangedArgs
+        {
+            public readonly string Guid;
+            public readonly string Value;
+
+            public ValueChangedArgs(string guid, string value)
+            {
+                Guid = guid;
+                Value = value;
+            }
+        }
+
+        private DelegateCommand<ValueChangedArgs> _valueChangedCommand;
+
+        public DelegateCommand<ValueChangedArgs> ValueChangedCommand
+            => _valueChangedCommand ?? (_valueChangedCommand = new DelegateCommand<ValueChangedArgs>(ValueChangedCommandExecute));
+
+        private void ValueChangedCommandExecute(ValueChangedArgs args)
+        {
+            var guid = args.Guid;
+            var value = args.Value;
+
+            var propertyEntry = GetPropertyEntry(guid);
+            if (propertyEntry == null)
+                return;
+
+            var propInfos = NodeInfos.SelectMany(n => n.Properties).Where(p => p.Name == propertyEntry.Name);
+            foreach (var p in propInfos)
+            {
+                p.Value = value == PropertyEntry.VariesCandidate ? p.OriginalValue : value;
+            }
         }
 
         private DelegateCommand<string> _addToSelectionCommand;

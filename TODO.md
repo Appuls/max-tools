@@ -1,8 +1,7 @@
 # TODO
 
 - Use stub to implement bulk editing logic
-  - Edit dummy PropertyEntry
-  - Remove dummy PropertyEntry
+  - SelectByPropertyInfo stub implementation
   - Add dummy PropertyEntry
 - Apply stub logic to Max operations
 - Finesse UI

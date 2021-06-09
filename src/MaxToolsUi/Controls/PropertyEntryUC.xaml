@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="30"
     d:DesignWidth="400"
+    Loaded="PropertyEntryUC_OnLoaded"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary Source="/MaxToolsUi;component/MaxToolsStyle.xaml" />
@@ -35,7 +36,7 @@
                 Grid.Column="0"
                 HorizontalAlignment="Left"
                 Command="{Binding RemoveCommand}"
-                CommandParameter="{Binding EntryName}"
+                CommandParameter="{Binding Guid}"
                 Style="{StaticResource CloseButton}" />
             <TextBlock
                 Grid.Column="1"
@@ -49,11 +50,14 @@
                 FontSize="12"
                 Text="" />
             <ComboBox
+                Name="ComboBox"
                 Grid.Column="3"
                 IsEditable="True"
                 IsTextSearchCaseSensitive="True"
                 ItemsSource="{Binding CandidateValues}"
-                SelectedIndex="0" />
+                LostFocus="ComboBox_OnLostFocus"
+                SelectedIndex="0"
+                SelectionChanged="ComboBox_OnSelectionChanged" />
             <Button
                 Grid.Column="4"
                 Padding="5,2"
@@ -65,7 +69,7 @@
                         CommandParameter="{Binding EntryName}"
                         Gesture="LeftClick" />
                     <MouseBinding
-                        Command="{Binding AddToSelectionCommand}"
+                        Command="{Binding ValueChangedCommand}"
                         CommandParameter="{Binding EntryName}"
                         Gesture="Control+LeftClick" />
                 </Button.InputBindings>

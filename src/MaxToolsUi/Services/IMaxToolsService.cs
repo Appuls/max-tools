@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using Prism.Mvvm;
 
 namespace MaxToolsUi.Services
 {
@@ -18,27 +20,36 @@ namespace MaxToolsUi.Services
         Hide,
     }
 
-    public class PropertyInfo
+    public class PropertyInfo: BindableBase
     {
         public string Name { get; }
-        public string Value { get; }
+
+        public string OriginalValue { get; }
+
+        private string _value;
+        public string Value
+        {
+            get => _value;
+            set => SetProperty(ref _value, value);
+        }
 
         public PropertyInfo(string name, string value)
         {
             Name = name;
             Value = value;
+            OriginalValue = Value;
         }
     }
 
     public class NodeInfo
     {
         public string Name { get; }
-        public IReadOnlyList<PropertyInfo> Properties { get; }
+        public ObservableCollection<PropertyInfo> Properties { get; } = new ObservableCollection<PropertyInfo>();
 
         public NodeInfo(string name, IReadOnlyList<PropertyInfo> properties)
         {
             Name = name;
-            Properties = properties ?? new List<PropertyInfo>();
+            Properties.AddRange(properties);
         }
     }
 

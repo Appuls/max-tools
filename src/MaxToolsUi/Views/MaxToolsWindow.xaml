@@ -40,8 +40,10 @@
                         AddToSelectionCommand="{Binding DataContext.AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         CandidateValues="{Binding CandidateValues}"
                         EntryName="{Binding Name}"
+                        Guid="{Binding Guid}"
                         RemoveCommand="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                        SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                        ValueChangedCommand="{Binding DataContext.ValueChangedCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -59,7 +61,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock><Run Text="{Binding Name, Mode=OneWay}" /><Run Text=" = " /><Run Text="{Binding Value, Mode=OneWay}" /></TextBlock>
+                                            <TextBlock><Run Text="{Binding Name, Mode=OneWay}" /><Run Text=" = " /><Run Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
