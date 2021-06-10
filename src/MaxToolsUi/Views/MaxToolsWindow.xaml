@@ -26,7 +26,7 @@
                 Height="Auto"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Command="{Binding StubCommand}"
+                Command="{Binding RefreshSelectionCommand}"
                 Content="Stub"
                 Visibility="{Binding IsStub, Converter={StaticResource B2VC}}" />
         </Grid>
@@ -47,8 +47,8 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <StackPanel Visibility="{Binding IsStub, Converter={StaticResource B2VC}}">
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeInfos</TextBlock>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeModels</TextBlock>
             <ItemsControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"

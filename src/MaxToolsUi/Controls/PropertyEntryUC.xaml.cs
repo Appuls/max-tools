@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MaxToolsUi.ViewModels;
+using Prism.Commands;
 
 namespace MaxToolsUi.Controls
 {
@@ -56,6 +45,14 @@ namespace MaxToolsUi.Controls
             set => SetValue(CandidateValuesProperty, value);
         }
 
+        public string GetCurrentValue()
+        {
+            if (ComboBox.SelectedIndex < 0 || CandidateValues?.Count == 0)
+                return null;
+
+            return CandidateValues?[ComboBox.SelectedIndex];
+        }
+
         public static readonly DependencyProperty RemoveCommandProperty
             = DependencyProperty.Register(nameof(RemoveCommand), typeof(ICommand), typeof(PropertyEntryUC));
 
@@ -72,6 +69,26 @@ namespace MaxToolsUi.Controls
         {
             get => (ICommand)GetValue(SelectCommandProperty);
             set => SetValue(SelectCommandProperty, value);
+        }
+
+        private MaxToolsWindowViewModel.SelectArgs GetSelectArgs()
+            => new MaxToolsWindowViewModel.SelectArgs(EntryName, GetCurrentValue());
+
+        private DelegateCommand<object> _innerSelectCommand;
+
+        public DelegateCommand<object> InnerSelectCommand
+            => _innerSelectCommand ?? (_innerSelectCommand = new DelegateCommand<object>(InnerSelectCommandExecute));
+
+        public void InnerSelectCommandExecute(object add)
+        {
+            if (add != null && add is bool b && b)
+            {
+                AddToSelectionCommand.Execute(GetSelectArgs());
+            }
+            else
+            {
+                SelectCommand.Execute(GetSelectArgs());
+            }
         }
 
         public static readonly DependencyProperty AddToSelectionCommandProperty
@@ -106,11 +123,6 @@ namespace MaxToolsUi.Controls
         public PropertyEntryUC()
         {
             InitializeComponent();
-        }
-
-        private void PropertyEntryUC_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("loaded!");
         }
 
         private void TriggerValueChanged()

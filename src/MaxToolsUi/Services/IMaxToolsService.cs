@@ -20,8 +20,9 @@ namespace MaxToolsUi.Services
         Hide,
     }
 
-    public class PropertyInfo: BindableBase
+    public class PropertyModel: BindableBase
     {
+        public const string VariesCandidate = "[Varies]";
         public string Name { get; }
 
         public string OriginalValue { get; }
@@ -33,7 +34,7 @@ namespace MaxToolsUi.Services
             set => SetProperty(ref _value, value);
         }
 
-        public PropertyInfo(string name, string value)
+        public PropertyModel(string name, string value)
         {
             Name = name;
             Value = value;
@@ -41,12 +42,12 @@ namespace MaxToolsUi.Services
         }
     }
 
-    public class NodeInfo
+    public class NodeModel
     {
         public string Name { get; }
-        public ObservableCollection<PropertyInfo> Properties { get; } = new ObservableCollection<PropertyInfo>();
+        public ObservableCollection<PropertyModel> Properties { get; } = new ObservableCollection<PropertyModel>();
 
-        public NodeInfo(string name, IReadOnlyList<PropertyInfo> properties)
+        public NodeModel(string name, IReadOnlyList<PropertyModel> properties)
         {
             Name = name;
             Properties.AddRange(properties);
@@ -55,10 +56,10 @@ namespace MaxToolsUi.Services
 
     public class SelectionChangedEventArgs
     {
-        public readonly IReadOnlyList<NodeInfo> NodeInfo;
+        public readonly IReadOnlyList<NodeModel> NodeInfo;
 
-        public SelectionChangedEventArgs(IReadOnlyList<NodeInfo> nodeInfo)
-            => NodeInfo = nodeInfo ?? new List<NodeInfo>();
+        public SelectionChangedEventArgs(IReadOnlyList<NodeModel> nodeInfo)
+            => NodeInfo = nodeInfo ?? new List<NodeModel>();
     }
 
     public interface IMaxToolsService
@@ -70,5 +71,7 @@ namespace MaxToolsUi.Services
         void AttachOwnerWindow(Window window);
         Task RunOnMaxThread(Action action);
         void ObserveSelectionChanged(bool enabled);
+        void SelectByProperty(string name, string value, bool add);
+        void RefreshSelection();
     }
 }

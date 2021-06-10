@@ -36,7 +36,10 @@ namespace MaxToolsUi.Views
         }
 
         protected override void OnActivated(EventArgs _)
-            => _maxToolsService.ObserveSelectionChanged(true);
+        {
+            _maxToolsService.ObserveSelectionChanged(true);
+            _maxToolsService.RefreshSelection();
+        }
 
         private void InnerHide()
         {

@@ -5,12 +5,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Autodesk.Max.MaxPlus;
 using MaxToolsUi;
 using MaxToolsUi.Services;
+using MaxToolsUi.ViewModels;
 using Environment = System.Environment;
 using INode = Autodesk.Max.Plugins.INode;
+using Object = Autodesk.Max.MaxPlus.Object;
 
 namespace MaxToolsLib
 {
@@ -80,9 +83,7 @@ namespace MaxToolsLib
         public void ShowDialog()
             => RunOnWpfThread(() => _app.ShowDialog());
 
-        private static readonly IReadOnlyList<PropertyInfo> DefaultProps = new PropertyInfo[] {};
-
-        public static IReadOnlyList<PropertyInfo> GetProperties(Autodesk.Max.MaxPlus.INode node)
+        public static IReadOnlyList<PropertyModel> GetProperties(Autodesk.Max.MaxPlus.INode node)
         {
             var buffer = new WStr();
             node.GetUserPropBuffer(buffer);
@@ -90,14 +91,14 @@ namespace MaxToolsLib
 
             if (string.IsNullOrEmpty(rawProperties))
             {
-                return DefaultProps;
+                return null;
             }
 
             // Split the lines.
             var lines = rawProperties.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
             if (lines.Length == 0)
             {
-                return DefaultProps;
+                return null;
             }
 
             // Split each token.
@@ -108,22 +109,52 @@ namespace MaxToolsLib
                 switch (tokens.Length)
                 {
                     case 0:
-                        return new PropertyInfo("", "");
+                        return new PropertyModel("", "");
                     case 1:
-                        return new PropertyInfo(tokens[0], "");
+                        return new PropertyModel(tokens[0], "");
                     case 2:
-                        return new PropertyInfo(tokens[0], tokens[1]);
+                        return new PropertyModel(tokens[0], tokens[1]);
                     default:
-                        return new PropertyInfo(tokens[0], string.Join("=", tokens.Skip(1)));
+                        return new PropertyModel(tokens[0], string.Join("=", tokens.Skip(1)));
                 }
             }).ToList();
         }
 
+        private static readonly IReadOnlyList<PropertyModel> DefaultProps = new PropertyModel[] { };
+
         public void HandleSelectionChanged()
         {
             var selection = SelectionManager.Nodes.ToList();
-            var nodeInfo = selection.Select(n => new NodeInfo(n.Name, GetProperties(n))).ToList();
+            var nodeInfo = selection.Select(n => new NodeModel(n.Name, GetProperties(n) ?? DefaultProps)).ToList();
             RunOnWpfThread(() => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(nodeInfo)));
         }
+
+        public async void SelectByProperty(string name, string value, bool add)
+        {
+            await RunOnMaxThread(() =>
+            {
+                if (!add)
+                {
+                    SelectionManager.ClearNodeSelection(true);
+                }
+
+                var nodeTab = new INodeTab();
+                foreach (var n in Core.GetRootNode().Children)
+                {
+                    var properties = GetProperties(n);
+                    if (properties == null)
+                        continue;
+
+                    if (properties.Any(p =>
+                        p.Name == name && (value == PropertyModel.VariesCandidate || p.Value == value)))
+                        nodeTab.Append(n, false);
+                }
+
+                SelectionManager.SelectNodes(nodeTab);
+            });
+        }
+
+        public async void RefreshSelection()
+            => await RunOnMaxThread(HandleSelectionChanged);
     }
 }

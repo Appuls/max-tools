@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using MaxToolsUi.ViewModels;
 
 namespace MaxToolsUi.Services
 {
@@ -20,19 +21,36 @@ namespace MaxToolsUi.Services
 
         public void ObserveSelectionChanged(bool enabled) { }
 
-        private const int NumStubNodes = 5;
-        public static IReadOnlyList<NodeInfo> StubNodeInfos =
+        private const int NumStubNodes = 3;
+        public static IReadOnlyList<NodeModel> StubNodeInfos =>
             Enumerable.Repeat(0, NumStubNodes)
-            .Select((_, i) => new NodeInfo($"node_info_{i}", new List<PropertyInfo>
+            .Select((_, i) => new NodeModel($"node_info_{i}", new List<PropertyModel>
             {
-                new PropertyInfo($"abc_{i}", "xyz"),
-                new PropertyInfo("hotdog", "mustard"),
-                new PropertyInfo("jojo", $"juju_{i}"),
-                new PropertyInfo("color", "red"),
-                new PropertyInfo("single_key", ""),
+                new PropertyModel($"abc_{i}", "xyz"),
+                new PropertyModel("hotdog", "mustard"),
+                new PropertyModel("jojo", $"juju_{i}"),
+                new PropertyModel("color", "red"),
+                new PropertyModel("single_key", ""),
             })).ToArray();
 
-        public void FireStubSelection()
-            => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(StubNodeInfos));
+        public readonly List<NodeModel> CurrentSelection = new List<NodeModel>();
+
+        public void Select(IEnumerable<NodeModel> nodes, bool add = false)
+        {
+            if (!add)
+            {
+                CurrentSelection.Clear();
+            }
+
+            CurrentSelection.AddRange(nodes);
+            OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(CurrentSelection));
+        }
+
+        public void RefreshSelection()
+            => Select(StubNodeInfos);
+
+        public void SelectByProperty(string name, string value, bool add)
+            => Select(StubNodeInfos.Where(n => n.Properties.Any(p => 
+                p.Name == name && (value == PropertyModel.VariesCandidate || p.Value == value))), add);
     }
 }

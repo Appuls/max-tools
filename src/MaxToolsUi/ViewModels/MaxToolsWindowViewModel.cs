@@ -12,8 +12,6 @@ namespace MaxToolsUi.ViewModels
 {
     public class PropertyEntry
     {
-        public const string VariesCandidate = "[Varies]";
-
         public string Guid { get; }
         public string Name { get; }
         public ObservableCollection<string> CandidateValues { get; } = new ObservableCollection<string>();
@@ -25,7 +23,7 @@ namespace MaxToolsUi.ViewModels
 
             if (candidateValues.Count > 1)
             {
-                CandidateValues.Add(VariesCandidate);
+                CandidateValues.Add(PropertyModel.VariesCandidate);
             }
             CandidateValues.AddRange(candidateValues);
         }
@@ -34,7 +32,7 @@ namespace MaxToolsUi.ViewModels
     public class MaxToolsWindowViewModel
     {
         private readonly IMaxToolsService _maxToolsService;
-        public ObservableCollection<NodeInfo> NodeInfos { get; } = new ObservableCollection<NodeInfo>();
+        public ObservableCollection<NodeModel> NodeInfos { get; } = new ObservableCollection<NodeModel>();
         public ObservableCollection<PropertyEntry> PropertyEntries { get; } = new ObservableCollection<PropertyEntry>();
         public bool IsStub => _maxToolsService.IsStub;
 
@@ -69,15 +67,37 @@ namespace MaxToolsUi.ViewModels
             }
         }
 
-        private DelegateCommand<string> _selectCommand;
-
-        public DelegateCommand<string> SelectCommand
-            => _selectCommand ?? (_selectCommand = new DelegateCommand<string>(SelectCommandExecute));
-
-        private void SelectCommandExecute(string entryName)
+        public class SelectArgs
         {
-            // TODO
+            public readonly string Name;
+            public readonly string Value;
+
+            public SelectArgs(string name, string value)
+            {
+                Name = name;
+                Value = value;
+            }
         }
+
+        public void Select(SelectArgs args, bool add)
+            => _maxToolsService.SelectByProperty(args.Name, args.Value, add);
+
+        private DelegateCommand<SelectArgs> _selectCommand;
+
+        public DelegateCommand<SelectArgs> SelectCommand
+            => _selectCommand ?? (_selectCommand = new DelegateCommand<SelectArgs>(SelectCommandExecute));
+
+        private void SelectCommandExecute(SelectArgs args)
+            => Select(args, false);
+
+
+        private DelegateCommand<SelectArgs> _addToSelectionCommand;
+
+        public DelegateCommand<SelectArgs> AddToSelectionCommand
+            => _addToSelectionCommand ?? (_addToSelectionCommand = new DelegateCommand<SelectArgs>(AddToSelectionCommandExecute));
+
+        private void AddToSelectionCommandExecute(SelectArgs args)
+            => Select(args, true);
 
         public class ValueChangedArgs
         {
@@ -108,31 +128,17 @@ namespace MaxToolsUi.ViewModels
             var propInfos = NodeInfos.SelectMany(n => n.Properties).Where(p => p.Name == propertyEntry.Name);
             foreach (var p in propInfos)
             {
-                p.Value = value == PropertyEntry.VariesCandidate ? p.OriginalValue : value;
+                p.Value = value == PropertyModel.VariesCandidate ? p.OriginalValue : value;
             }
         }
 
-        private DelegateCommand<string> _addToSelectionCommand;
+        private DelegateCommand _refreshSelectionCommand;
 
-        public DelegateCommand<string> AddToSelectionCommand
-            => _addToSelectionCommand ?? (_addToSelectionCommand = new DelegateCommand<string>(AddToSelectionCommandExecute));
+        public DelegateCommand RefreshSelectionCommand
+            => _refreshSelectionCommand ?? (_refreshSelectionCommand = new DelegateCommand(RefreshSelectionCommandExecute));
 
-        private void AddToSelectionCommandExecute(string entryName)
-        {
-            // TODO
-        }
-
-        private DelegateCommand _stubCommand;
-
-        public DelegateCommand StubCommand
-            => _stubCommand ?? (_stubCommand = new DelegateCommand(StubCommandExecute));
-
-        private void StubCommandExecute()
-        {
-            if (!(_maxToolsService is StubMaxToolsService stubService))
-                return;
-            stubService.FireStubSelection();
-        }
+        private void RefreshSelectionCommandExecute()
+            => _maxToolsService.RefreshSelection();
 
         private void HandleSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
