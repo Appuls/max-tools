@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Autodesk.Max.MaxPlus;
 using MaxToolsUi;
+using MaxToolsUi.Models;
 using MaxToolsUi.Services;
-using MaxToolsUi.ViewModels;
-using Environment = System.Environment;
-using INode = Autodesk.Max.Plugins.INode;
-using Object = Autodesk.Max.MaxPlus.Object;
+
+using INode = Autodesk.Max.MaxPlus.INode;
 
 namespace MaxToolsLib
 {
@@ -23,6 +20,7 @@ namespace MaxToolsLib
         private readonly Dispatcher _maxDispatcher;
         private readonly Thread _wpfThread;
         private readonly TaskCompletionSource<bool> _windowAttached;
+        private readonly List<NodeModel> _nodeModels = new List<NodeModel>();
         private bool _isObservingSelectionChanged = false;
 
         public bool IsStub => false;
@@ -83,7 +81,10 @@ namespace MaxToolsLib
         public void ShowDialog()
             => RunOnWpfThread(() => _app.ShowDialog());
 
-        public static IReadOnlyList<PropertyModel> GetProperties(Autodesk.Max.MaxPlus.INode node)
+        public const char Separator = '=';
+        public const string LineSeparator = "\r\n";
+
+        public static IReadOnlyList<PropertyModel> GetProperties(INode node)
         {
             var buffer = new WStr();
             node.GetUserPropBuffer(buffer);
@@ -95,7 +96,7 @@ namespace MaxToolsLib
             }
 
             // Split the lines.
-            var lines = rawProperties.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = rawProperties.Split(new [] { LineSeparator }, StringSplitOptions.RemoveEmptyEntries);
             if (lines.Length == 0)
             {
                 return null;
@@ -104,7 +105,7 @@ namespace MaxToolsLib
             // Split each token.
             return lines.Select(l =>
             {
-                var tokens = l.Split(new []{ '=' }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToArray();
+                var tokens = l.Split(new []{ Separator }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToArray();
                 
                 switch (tokens.Length)
                 {
@@ -115,23 +116,29 @@ namespace MaxToolsLib
                     case 2:
                         return new PropertyModel(tokens[0], tokens[1]);
                     default:
-                        return new PropertyModel(tokens[0], string.Join("=", tokens.Skip(1)));
+                        return new PropertyModel(tokens[0], string.Join(Separator.ToString(), tokens.Skip(1)));
                 }
             }).ToList();
         }
+
+        public static WStr CreateWStr(IEnumerable<PropertyModel> propertyModels)
+            => new WStr(string.Join(LineSeparator, propertyModels.Select(p => $"{p.Name}{Separator}{p.Value}")));
+
+        public static void SetUserProperties(INode node, IEnumerable<PropertyModel> propertyModels)
+            => node.SetUserPropBuffer(CreateWStr(propertyModels));
 
         private static readonly IReadOnlyList<PropertyModel> DefaultProps = new PropertyModel[] { };
 
         public void HandleSelectionChanged()
         {
             var selection = SelectionManager.Nodes.ToList();
-            var nodeInfo = selection.Select(n => new NodeModel(n.Name, GetProperties(n) ?? DefaultProps)).ToList();
-            RunOnWpfThread(() => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(nodeInfo)));
+            _nodeModels.Clear();
+            _nodeModels.AddRange(selection.Select(n => new NodeModel(n.Name, GetProperties(n) ?? DefaultProps)));
+            RunOnWpfThread(() => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(_nodeModels)));
         }
 
-        public async void SelectByProperty(string name, string value, bool add)
-        {
-            await RunOnMaxThread(() =>
+        public void SelectByProperty(string name, string value, bool add)
+            => RunOnMaxThread(() =>
             {
                 if (!add)
                 {
@@ -152,9 +159,31 @@ namespace MaxToolsLib
 
                 SelectionManager.SelectNodes(nodeTab);
             });
-        }
 
-        public async void RefreshSelection()
-            => await RunOnMaxThread(HandleSelectionChanged);
+        public void RefreshSelection()
+            => RunOnMaxThread(HandleSelectionChanged);
+
+        public void ApplyNodeModels()
+            => RunOnMaxThread(() =>
+            {
+                var nodeMap = SelectionManager.Nodes.ToDictionary(n => n.Name, n => n);
+                foreach (var nodeModel in _nodeModels)
+                {
+                    if (!nodeMap.TryGetValue(nodeModel.Name, out var inode))
+                        continue;
+                    SetUserProperties(inode, nodeModel.Properties);
+                }
+                RefreshSelection();
+            });
+
+        public void AddProperty(string name, string value)
+        {
+            foreach (var n in _nodeModels)
+            {
+                n.AddProperty(name, value);
+            }
+
+            ApplyNodeModels();
+        }
     }
 }

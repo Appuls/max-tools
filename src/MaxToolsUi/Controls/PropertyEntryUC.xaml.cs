@@ -27,6 +27,15 @@ namespace MaxToolsUi.Controls
             set => SetValue(GuidProperty, value);
         }
 
+        public static readonly DependencyProperty IsGlobalProperty
+            = DependencyProperty.Register(nameof(IsGlobal), typeof(bool), typeof(PropertyEntryUC));
+
+        public bool IsGlobal
+        {
+            get => (bool) GetValue(IsGlobalProperty);
+            set => SetValue(IsGlobalProperty, value);
+        }
+
         public static readonly DependencyProperty EntryNameProperty
             = DependencyProperty.Register(nameof(EntryName), typeof(string), typeof(PropertyEntryUC));
 
@@ -116,7 +125,7 @@ namespace MaxToolsUi.Controls
             set
             {
                 _selectedItem = value;
-                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged(nameof(SelectedItem));
             }
         }
 

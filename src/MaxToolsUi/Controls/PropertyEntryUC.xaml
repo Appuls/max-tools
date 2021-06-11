@@ -29,7 +29,7 @@
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button
                 Grid.Column="0"
@@ -37,11 +37,20 @@
                 Command="{Binding RemoveCommand}"
                 CommandParameter="{Binding Guid}"
                 Style="{StaticResource CloseButton}" />
-            <TextBlock
+            <StackPanel
                 Grid.Column="1"
-                HorizontalAlignment="Left"
-                Text="{Binding EntryName, FallbackValue='EntryName'}"
-                TextTrimming="CharacterEllipsis" />
+                HorizontalAlignment="Stretch"
+                Orientation="Horizontal">
+                <TextBox
+                    VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Text="{Binding EntryName, FallbackValue='EntryName'}" />
+                <TextBlock
+                    FontStyle="Italic"
+                    Text="*"
+                    Visibility="{Binding IsGlobal, Converter={StaticResource PB2VC}, ConverterParameter='false'}" />
+            </StackPanel>
             <TextBlock
                 Grid.Column="2"
                 HorizontalAlignment="Center"
@@ -59,6 +68,7 @@
                 SelectionChanged="ComboBox_OnSelectionChanged" />
             <Button
                 Grid.Column="4"
+                Width="45"
                 Padding="5,2"
                 HorizontalAlignment="Right"
                 Content="Select">

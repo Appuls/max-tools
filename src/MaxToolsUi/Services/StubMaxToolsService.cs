@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using MaxToolsUi.ViewModels;
+using MaxToolsUi.Models;
 
 namespace MaxToolsUi.Services
 {
@@ -16,15 +15,12 @@ namespace MaxToolsUi.Services
 
         public void AttachOwnerWindow(Window _) { }
 
-        public Task RunOnMaxThread(Action action)
-            => Task.Run(action);
-
         public void ObserveSelectionChanged(bool enabled) { }
 
         private const int NumStubNodes = 3;
-        public static IReadOnlyList<NodeModel> StubNodeInfos =>
+        public static IReadOnlyList<NodeModel> StubNodeModels =
             Enumerable.Repeat(0, NumStubNodes)
-            .Select((_, i) => new NodeModel($"node_info_{i}", new List<PropertyModel>
+            .Select((_, i) => new NodeModel($"node_model_{i}", new List<PropertyModel>
             {
                 new PropertyModel($"abc_{i}", "xyz"),
                 new PropertyModel("hotdog", "mustard"),
@@ -47,10 +43,24 @@ namespace MaxToolsUi.Services
         }
 
         public void RefreshSelection()
-            => Select(StubNodeInfos);
+            => Select(StubNodeModels);
 
         public void SelectByProperty(string name, string value, bool add)
-            => Select(StubNodeInfos.Where(n => n.Properties.Any(p => 
+            => Select(StubNodeModels.Where(n => n.Properties.Any(p => 
                 p.Name == name && (value == PropertyModel.VariesCandidate || p.Value == value))), add);
+
+        public void AddProperty(string name, string value)
+        {
+            foreach (var n in CurrentSelection)
+            {
+                n.AddProperty(name, value);
+            }
+            Select(CurrentSelection.ToArray());
+        }
+
+        public void ApplyNodeModels()
+        {
+            // do nothing
+        }
     }
 }

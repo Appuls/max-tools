@@ -1,38 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MaxToolsUi.Controls;
+using MaxToolsUi.Models;
 using MaxToolsUi.Services;
 using Prism.Commands;
-using Prism.Events;
+using Prism.Mvvm;
 
 namespace MaxToolsUi.ViewModels
 {
-    public class PropertyEntry
-    {
-        public string Guid { get; }
-        public string Name { get; }
-        public ObservableCollection<string> CandidateValues { get; } = new ObservableCollection<string>();
-
-        public PropertyEntry(string name, IReadOnlyList<string> candidateValues)
-        {
-            Guid = System.Guid.NewGuid().ToString();
-            Name = name;
-
-            if (candidateValues.Count > 1)
-            {
-                CandidateValues.Add(PropertyModel.VariesCandidate);
-            }
-            CandidateValues.AddRange(candidateValues);
-        }
-    }
-
-    public class MaxToolsWindowViewModel
+    public class MaxToolsWindowViewModel : BindableBase
     {
         private readonly IMaxToolsService _maxToolsService;
-        public ObservableCollection<NodeModel> NodeInfos { get; } = new ObservableCollection<NodeModel>();
+        public ObservableCollection<NodeModel> NodeModels { get; } = new ObservableCollection<NodeModel>();
         public ObservableCollection<PropertyEntry> PropertyEntries { get; } = new ObservableCollection<PropertyEntry>();
         public bool IsStub => _maxToolsService.IsStub;
 
@@ -58,13 +37,12 @@ namespace MaxToolsUi.ViewModels
 
             PropertyEntries.Remove(propertyEntry);
 
-            foreach (var n in NodeInfos)
+            foreach (var n in NodeModels)
             {
-                var toRemove = n.Properties.FirstOrDefault(p => p.Name == propertyEntry.Name);
-                if (toRemove == null)
-                    continue;
-                n.Properties.Remove(toRemove);
+                n.RemoveProperty(propertyEntry.Name);
             }
+
+            _maxToolsService.ApplyNodeModels();
         }
 
         public class SelectArgs
@@ -89,7 +67,6 @@ namespace MaxToolsUi.ViewModels
 
         private void SelectCommandExecute(SelectArgs args)
             => Select(args, false);
-
 
         private DelegateCommand<SelectArgs> _addToSelectionCommand;
 
@@ -125,12 +102,26 @@ namespace MaxToolsUi.ViewModels
             if (propertyEntry == null)
                 return;
 
-            var propInfos = NodeInfos.SelectMany(n => n.Properties).Where(p => p.Name == propertyEntry.Name);
+            var propInfos = NodeModels
+                .SelectMany(n => n.Properties)
+                .Where(p => p.Name == propertyEntry.Name);
             foreach (var p in propInfos)
             {
                 p.Value = value == PropertyModel.VariesCandidate ? p.OriginalValue : value;
             }
+
+            _maxToolsService.ApplyNodeModels();
         }
+
+        public bool CanAdd => NodeModels.Count > 0;
+
+        private DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs> _addCommand;
+
+        public DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs> AddCommand
+            => _addCommand ?? (_addCommand = new DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs>(AddCommandExecute));
+
+        public void AddCommandExecute(AddPropertyEntryUC.AddCommandEventArgs args)
+            => _maxToolsService.AddProperty(args.Name, args.Value);
 
         private DelegateCommand _refreshSelectionCommand;
 
@@ -142,15 +133,21 @@ namespace MaxToolsUi.ViewModels
 
         private void HandleSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            NodeInfos.Clear();
-            NodeInfos.AddRange(args.NodeInfo);
+            NodeModels.Clear();
+            NodeModels.AddRange(args.NodeModels);
+            RaisePropertyChanged(nameof(CanAdd));
 
             PropertyEntries.Clear();
-            var propEntries = NodeInfos
+            var propEntries = NodeModels
                 .SelectMany(n => n.Properties)
                 .GroupBy(t => t.Name)
-                .Select(g => new PropertyEntry(g.Key, g.Select(t => t.Value).Distinct().OrderBy(v => v).ToArray()))
-                .OrderBy(p => p.Name);
+                .Select(g =>
+                {
+                    var name = g.Key;
+                    var candidateValues = g.Select(t => t.Value).Distinct().OrderBy(v => v).ToArray();
+                    var isGlobal = g.Count() == NodeModels.Count;
+                    return new PropertyEntry(name, candidateValues, isGlobal);
+                }).OrderBy(p => p.Name);
             PropertyEntries.AddRange(propEntries);
         }
 

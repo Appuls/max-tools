@@ -18,18 +18,13 @@
         <ResourceDictionary Source="/MaxToolsUi;component/MaxToolsStyle.xaml" />
     </Window.Resources>
     <StackPanel Width="450" Orientation="Vertical">
-
-        <Grid>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Common Properties</TextBlock>
-            <Button
-                Width="50"
-                Height="Auto"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Command="{Binding RefreshSelectionCommand}"
-                Content="Stub"
-                Visibility="{Binding IsStub, Converter={StaticResource B2VC}}" />
-        </Grid>
+        <TextBlock>Add Property</TextBlock>
+        <controls:AddPropertyEntryUC
+            Margin="0,5,0,0"
+            AddCommand="{Binding AddCommand}"
+            IsEnabled="{Binding CanAdd}" />
+        <Separator Margin="0,5,0,0" />
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Common Properties</TextBlock>
         <ItemsControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
@@ -37,22 +32,26 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <controls:PropertyEntryUC
+                        Margin="0,5,0,0"
                         AddToSelectionCommand="{Binding DataContext.AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         CandidateValues="{Binding CandidateValues}"
                         EntryName="{Binding Name}"
                         Guid="{Binding Guid}"
+                        IsGlobal="{Binding IsGlobal}"
                         RemoveCommand="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         ValueChangedCommand="{Binding DataContext.ValueChangedCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <StackPanel>
+        <Separator Margin="0,5,0,0" />
+
+        <StackPanel Visibility="{Binding IsStub, Converter={StaticResource B2VC}}">
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeModels</TextBlock>
             <ItemsControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                ItemsSource="{Binding NodeInfos}">
+                ItemsSource="{Binding NodeModels}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
