@@ -75,10 +75,9 @@
     <ManagedServices_dll>$(YearLibDir)ManagedServices.dll</ManagedServices_dll>
     <MaxPlusDotNet_dll>$(YearLibDir)MaxPlusDotNet.dll</MaxPlusDotNet_dll>
 
-    <AppDataMaxToolsDir>$(LocalAppData)\MaxTools\$(Year)\</AppDataMaxToolsDir>
-    <MaxStartupDir>$(LocalAppData)\Autodesk\3dsMax\$(Year) - 64bit\ENU\scripts\startup\</MaxStartupDir>
-    <MaxToolsBootstrapFileName>max-tools-bootstrap.ms</MaxToolsBootstrapFileName>
-    <MaxToolsBootstrapFilePath>$(MaxStartupDir)$(MaxToolsBootstrapFileName)</MaxToolsBootstrapFilePath>
+    <YearOutDir>$(Here)out\$(Year)\</YearOutDir>
+    <YearBinDir>$(YearOutDir)max-tools\</YearBinDir>
+    <MaxToolsBootstrapFileName>max-tools.ms</MaxToolsBootstrapFileName>
   </PropertyGroup>
 
 </Project>
