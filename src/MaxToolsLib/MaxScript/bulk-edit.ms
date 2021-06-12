@@ -1,4 +1,12 @@
-﻿(
+﻿--
+-- bulk-edit.ms
+--
+-- Run this script to open a window which allows you to update the user-defined properties on
+-- the current selection.
+--
+-- See: https://github.com/Appuls/max-tools
+--
+(
     global maxTools_bootstrap
 
     global maxTools_openDialog

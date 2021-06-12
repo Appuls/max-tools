@@ -71,13 +71,12 @@
   <PropertyGroup Label="MaxProjectProperties">
     <YearLibDir>$(LibDir)$(Year)\</YearLibDir>
     <Autodesk_Max_dll>$(YearLibDir)Autodesk.Max.dll</Autodesk_Max_dll>
-    <Geometry3D_dll>$(YearLibDir)Geometry3D.dll</Geometry3D_dll>
     <ManagedServices_dll>$(YearLibDir)ManagedServices.dll</ManagedServices_dll>
     <MaxPlusDotNet_dll>$(YearLibDir)MaxPlusDotNet.dll</MaxPlusDotNet_dll>
 
     <YearOutDir>$(Here)out\$(Year)\</YearOutDir>
     <YearBinDir>$(YearOutDir)max-tools\</YearBinDir>
-    <MaxToolsBootstrapFileName>max-tools.ms</MaxToolsBootstrapFileName>
+    <MaxToolsBootstrapFileName>bulk-edit.ms</MaxToolsBootstrapFileName>
   </PropertyGroup>
 
 </Project>
