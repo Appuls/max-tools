@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
-    Title="MaxTools"
+    Title="Bulk Edit"
     Width="Auto"
     Height="Auto"
     prism:ViewModelLocator.AutoWireViewModel="True"
@@ -17,58 +17,78 @@
     <Window.Resources>
         <ResourceDictionary Source="/MaxToolsUi;component/MaxToolsStyle.xaml" />
     </Window.Resources>
-    <StackPanel Width="450" Orientation="Vertical">
-        <TextBlock>Add Property</TextBlock>
-        <controls:AddPropertyEntryUC
-            Margin="0,5,0,0"
-            AddCommand="{Binding AddCommand}"
-            IsEnabled="{Binding CanAdd}" />
-        <Separator Margin="0,5,0,0" />
-        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Common Properties</TextBlock>
-        <ItemsControl
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            ItemsSource="{Binding PropertyEntries}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <controls:PropertyEntryUC
-                        Margin="0,5,0,0"
-                        AddToSelectionCommand="{Binding DataContext.AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        CandidateValues="{Binding CandidateValues}"
-                        EntryName="{Binding Name}"
-                        Guid="{Binding Guid}"
-                        IsGlobal="{Binding IsGlobal}"
-                        RemoveCommand="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        ValueChangedCommand="{Binding DataContext.ValueChangedCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Separator Margin="0,5,0,0" />
-
-        <StackPanel Visibility="{Binding IsStub, Converter={StaticResource B2VC}}">
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeModels</TextBlock>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <StackPanel
+            Width="450"
+            Margin="5"
+            Orientation="Vertical">
+            <TextBlock
+                Margin="0,0,0,5"
+                Style="{StaticResource SectionTextBlock}"
+                Text="Add Property" />
+            <controls:AddPropertyEntryUC
+                Margin="0,5,0,0"
+                AddCommand="{Binding AddCommand}"
+                IsEnabled="{Binding HasNodeModels}" />
+            <TextBlock
+                Margin="0,5,0,5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Style="{StaticResource SectionTextBlock}"
+                Text="Properties" />
             <ItemsControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                ItemsSource="{Binding NodeModels}">
+                ItemsSource="{Binding PropertyEntries}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="{Binding Name}" />
-                            <ItemsControl Margin="5,0" ItemsSource="{Binding Properties}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock><Run Text="{Binding Name, Mode=OneWay}" /><Run Text=" = " /><Run Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                        <controls:PropertyEntryUC
+                            Margin="0,5,0,0"
+                            AddToSelectionCommand="{Binding DataContext.AddToSelectionCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                            CandidateValues="{Binding CandidateValues}"
+                            EntryName="{Binding Name}"
+                            Guid="{Binding Guid}"
+                            IsGlobal="{Binding IsGlobal}"
+                            RemoveCommand="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                            SelectCommand="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                            ValueChangedCommand="{Binding DataContext.ValueChangedCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <StackPanel Margin="0,10,0,0">
+                <Button
+                    Width="85"
+                    Height="20"
+                    HorizontalAlignment="Right"
+                    Command="{Binding ExportToCsvCommand}"
+                    Content="Export to CSV"
+                    IsEnabled="{Binding HasNodeModels}"
+                    Style="{StaticResource MaxToolButton}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding IsStub, Converter={StaticResource B2VC}}">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">NodeModels</TextBlock>
+                <ItemsControl
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    ItemsSource="{Binding NodeModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}" />
+                                <ItemsControl Margin="5,0" ItemsSource="{Binding Properties}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock><Run Text="{Binding Name, Mode=OneWay}" /><Run Text=" = " /><Run Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>

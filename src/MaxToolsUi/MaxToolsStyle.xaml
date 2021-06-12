@@ -8,11 +8,71 @@
     <conv:ParamBooleanConverter x:Key="PB2VC" />
     <system:Boolean x:Key="True">True</system:Boolean>
     <system:Boolean x:Key="False">False</system:Boolean>
-    <Style x:Key="CloseButton" TargetType="{x:Type Button}">
+
+    <Color x:Key="BackgroundColor">#444444</Color>
+    <Color x:Key="ButtonColor">#646464</Color>
+    <Color x:Key="ButtonMouseoverColor">#383838</Color>
+    <Color x:Key="ButtonPressedColor">#496a83</Color>
+    <Color x:Key="ButtonPressedRedColor">#d52020</Color>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="ButtonBrush" Color="{StaticResource ButtonColor}" />
+    <SolidColorBrush x:Key="ButtonMouseoverBrush" Color="{StaticResource ButtonMouseoverColor}" />
+    <SolidColorBrush x:Key="ButtonPressedBrush" Color="{StaticResource ButtonPressedColor}" />
+    <SolidColorBrush x:Key="ButtonPressedRedBrush" Color="{StaticResource ButtonPressedRedColor}" />
+
+    <Style x:Key="DefaultTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style x:Key="SectionTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="ReadOnlyTextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="IsReadOnly" Value="True" />
+    </Style>
+
+    <Style x:Key="MaxToolButton" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource ButtonBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ButtonMouseoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource ButtonPressedBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style
+        x:Key="CloseButton"
+        BasedOn="{StaticResource MaxToolButton}"
+        TargetType="{x:Type Button}">
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
         <Setter Property="FontSize" Value="8" />
         <Setter Property="Content" Value="" />
         <Setter Property="Width" Value="20" />
         <Setter Property="Height" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource ButtonPressedRedBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
+
 </ResourceDictionary>

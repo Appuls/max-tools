@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using CsvHelper;
 using MaxToolsUi.Controls;
 using MaxToolsUi.Models;
 using MaxToolsUi.Services;
+using MaxToolsUi.Utilities;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -113,7 +115,7 @@ namespace MaxToolsUi.ViewModels
             _maxToolsService.ApplyNodeModels();
         }
 
-        public bool CanAdd => NodeModels.Count > 0;
+        public bool HasNodeModels => NodeModels.Count > 0;
 
         private DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs> _addCommand;
 
@@ -135,7 +137,7 @@ namespace MaxToolsUi.ViewModels
         {
             NodeModels.Clear();
             NodeModels.AddRange(args.NodeModels);
-            RaisePropertyChanged(nameof(CanAdd));
+            RaisePropertyChanged(nameof(HasNodeModels));
 
             PropertyEntries.Clear();
             var propEntries = NodeModels
@@ -155,5 +157,13 @@ namespace MaxToolsUi.ViewModels
         {
             _maxToolsService.OnSelectionChanged += HandleSelectionChanged;
         }
+
+        private DelegateCommand _exportToCsvCommand;
+
+        public DelegateCommand ExportToCsvCommand
+            => _exportToCsvCommand ?? (_exportToCsvCommand = new DelegateCommand(ExportToCsvCommandExecute));
+
+        public void ExportToCsvCommandExecute()
+            => NodeModels.WriteToCsvWithDialog();
     }
 }

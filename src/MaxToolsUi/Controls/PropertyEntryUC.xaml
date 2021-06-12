@@ -13,9 +13,6 @@
     </UserControl.Resources>
     <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
         <Grid.Resources>
-            <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
             <Style TargetType="{x:Type Button}">
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
@@ -43,19 +40,21 @@
                 Orientation="Horizontal">
                 <TextBox
                     VerticalContentAlignment="Center"
-                    BorderThickness="0"
-                    IsReadOnly="True"
+                    Style="{StaticResource ReadOnlyTextBox}"
                     Text="{Binding EntryName, FallbackValue='EntryName'}" />
                 <TextBlock
                     FontStyle="Italic"
+                    Style="{StaticResource DefaultTextBlock}"
                     Text="*"
                     Visibility="{Binding IsGlobal, Converter={StaticResource PB2VC}, ConverterParameter='false'}" />
             </StackPanel>
             <TextBlock
                 Grid.Column="2"
                 HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 FontFamily="Segoe MDL2 Assets"
                 FontSize="12"
+                Style="{StaticResource DefaultTextBlock}"
                 Text="" />
             <ComboBox
                 Name="ComboBox"
@@ -69,9 +68,9 @@
             <Button
                 Grid.Column="4"
                 Width="45"
-                Padding="5,2"
                 HorizontalAlignment="Right"
-                Content="Select">
+                Content="Select"
+                Style="{StaticResource MaxToolButton}">
                 <Button.InputBindings>
                     <MouseBinding
                         Command="{Binding InnerSelectCommand}"

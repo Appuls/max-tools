@@ -33,6 +33,7 @@
             VerticalAlignment="Center"
             FontFamily="Segoe MDL2 Assets"
             FontSize="12"
+            Style="{StaticResource DefaultTextBlock}"
             Text="" />
         <TextBox
             Name="TextBoxValue"
@@ -45,6 +46,7 @@
             Padding="5,2"
             HorizontalAlignment="Right"
             Command="{Binding AddPropertyEntryCommandInternal}"
-            Content="Add" />
+            Content="Add"
+            Style="{StaticResource MaxToolButton}" />
     </Grid>
 </UserControl>
