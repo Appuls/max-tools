@@ -40,6 +40,7 @@
     <Year>2020</Year>
     <Year Condition="'$(Configuration.Contains(2020))'">2020</Year>
     <Year Condition="'$(Configuration.Contains(2021))'">2021</Year>
+    <Year Condition="'$(Configuration.Contains(2022))'">2022</Year>
     <YearTarget>YEAR_TARGET_$(Year)</YearTarget>
     <DefineConstants>$(DefineConstants);$(YearTarget)</DefineConstants>
   </PropertyGroup>
@@ -48,10 +49,11 @@
     <TargetFramework>net471</TargetFramework>
     <TargetFramework Condition="'$(Year)' == '2020'">net471</TargetFramework>
     <TargetFramework Condition="'$(Year)' == '2021'">net48</TargetFramework>
+    <TargetFramework Condition="'$(Year)' == '2022'">net48</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Configurations>Debug_2020;Release_2020;Debug_2021;Release_2021</Configurations>
+    <Configurations>Debug_2020;Release_2020;Debug_2021;Release_2021;Debug_2022;Release_2022</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_2020'">
@@ -65,6 +67,13 @@
     <OutputPath>bin\Debug\$(Year)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_2021'">
+    <OutputPath>bin\Release\$(Year)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2022'">
+    <OutputPath>bin\Debug\$(Year)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2022'">
     <OutputPath>bin\Release\$(Year)\</OutputPath>
   </PropertyGroup>
 

@@ -1,3 +1,4 @@
 # TODO
 
-- Create archive bundles with a README containing instructions on how to use the bundle.
+- "(Unassigned)" or other string instead of asterisk
+- Selection does not consider hierarchies or groups; need to dig recursively into node children.

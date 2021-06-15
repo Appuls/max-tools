@@ -63,12 +63,24 @@ namespace MaxToolsLib
             _windowAttached.SetResult(true);
         }
 
+        public Task RunMaxScript(string maxScriptSource)
+        {
+            return RunOnMaxThread(() =>
+#if YEAR_TARGET_2020 || YEAR_TARGET_2021
+                Core.ExecuteMAXScript(maxScriptSource)
+#else
+                Core.ExecuteMAXScript(maxScriptSource, ScriptSource.Type.NonEmbedded)
+#endif
+            );
+        }
+
+
         public async void ObserveSelectionChanged(bool enabled)
         {
             if (enabled && _isObservingSelectionChanged)
                 return;
 
-            await RunOnMaxThread(() => Core.ExecuteMAXScript($"maxTools_observeSelectionChanged {enabled}"));
+            await RunMaxScript($"maxTools_observeSelectionChanged {enabled}");
             _isObservingSelectionChanged = enabled;
         }
 
