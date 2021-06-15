@@ -33,7 +33,7 @@
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="REM Delete any previous contents in &quot;$(YearOutDir)&quot;&#xD;&#xA;if exist &quot;$(YearOutDir)&quot; rmdir /s /q &quot;$(YearOutDir)&quot;&#xD;&#xA;&#xD;&#xA;mkdir &quot;$(YearOutDir)&quot;&#xD;&#xA;copy &quot;$(ProjectDir)MaxScript\$(MaxToolsBootstrapFileName)&quot; &quot;$(YearOutDir)&quot;&#xD;&#xA;&#xD;&#xA;mkdir &quot;$(YearBinDir)&quot;&#xD;&#xA;copy &quot;$(TargetDir)*.*&quot; &quot;$(YearBinDir)&quot;" />
+    <Exec Command="REM Delete any previous contents in &quot;$(YearOutDir)&quot;&#xD;&#xA;REM if exist &quot;$(YearOutDir)&quot; rmdir /s /q &quot;$(YearOutDir)&quot;&#xD;&#xA;&#xD;&#xA;REM mkdir &quot;$(YearOutDir)&quot;&#xD;&#xA;copy &quot;$(ProjectDir)MaxScript\$(MaxToolsBootstrapFileName)&quot; &quot;$(YearOutDir)&quot;&#xD;&#xA;&#xD;&#xA;REM mkdir &quot;$(YearBinDir)&quot;&#xD;&#xA;REM copy &quot;$(TargetDir)*.*&quot; &quot;$(YearBinDir)&quot;&#xD;&#xA;&#xD;&#xA;call &quot;$(SevenZip)&quot; a &quot;$(YearZip)&quot; &quot;$(YearOutDir)\*&quot;&#xD;&#xA;" />
   </Target>
 
 </Project>

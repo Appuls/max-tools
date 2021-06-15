@@ -4,6 +4,7 @@
     <Here>$(MSBuildThisFileDirectory)</Here>
     <SrcDir>$(Here)src\</SrcDir>
     <LibDir>$(Here)lib\</LibDir>
+    <SevenZip>$(Here)vendor\7z\7za.exe</SevenZip>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -56,27 +57,6 @@
     <Configurations>Debug_2020;Release_2020;Debug_2021;Release_2021;Debug_2022;Release_2022</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2020'">
-    <OutputPath>bin\Debug\$(Year)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_2020'">
-    <OutputPath>bin\Release\$(Year)\</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2021'">
-    <OutputPath>bin\Debug\$(Year)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_2021'">
-    <OutputPath>bin\Release\$(Year)\</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2022'">
-    <OutputPath>bin\Debug\$(Year)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_2022'">
-    <OutputPath>bin\Release\$(Year)\</OutputPath>
-  </PropertyGroup>
-
   <PropertyGroup Label="MaxProjectProperties">
     <YearLibDir>$(LibDir)$(Year)\</YearLibDir>
     <Autodesk_Max_dll>$(YearLibDir)Autodesk.Max.dll</Autodesk_Max_dll>
@@ -84,8 +64,30 @@
     <MaxPlusDotNet_dll>$(YearLibDir)MaxPlusDotNet.dll</MaxPlusDotNet_dll>
 
     <YearOutDir>$(Here)out\$(Configuration)\</YearOutDir>
+    <YearZip>$(Here)out\$(Configuration).zip</YearZip>
     <YearBinDir>$(YearOutDir)max-tools\</YearBinDir>
     <MaxToolsBootstrapFileName>bulk-edit.ms</MaxToolsBootstrapFileName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2020'">
+    <OutputPath>$(YearBinDir)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2020'">
+    <OutputPath>$(YearBinDir)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2021'">
+    <OutputPath>$(YearBinDir)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2021'">
+    <OutputPath>$(YearBinDir)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_2022'">
+    <OutputPath>$(YearBinDir)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_2022'">
+    <OutputPath>$(YearBinDir)</OutputPath>
   </PropertyGroup>
 
 </Project>
