@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using CsvHelper;
 using MaxToolsUi.Controls;
 using MaxToolsUi.Models;
 using MaxToolsUi.Services;
@@ -51,16 +50,15 @@ namespace MaxToolsUi.ViewModels
         {
             public readonly string Name;
             public readonly string Value;
+            public readonly bool Add;
 
-            public SelectArgs(string name, string value)
+            public SelectArgs(string name, string value, bool add)
             {
                 Name = name;
                 Value = value;
+                Add = add;
             }
         }
-
-        public void Select(SelectArgs args, bool add)
-            => _maxToolsService.SelectByProperty(args.Name, args.Value, add);
 
         private DelegateCommand<SelectArgs> _selectCommand;
 
@@ -68,15 +66,15 @@ namespace MaxToolsUi.ViewModels
             => _selectCommand ?? (_selectCommand = new DelegateCommand<SelectArgs>(SelectCommandExecute));
 
         private void SelectCommandExecute(SelectArgs args)
-            => Select(args, false);
+            => _maxToolsService.SelectByProperty(args.Name, args.Value, args.Add);
 
-        private DelegateCommand<SelectArgs> _addToSelectionCommand;
+        private DelegateCommand<bool?> _selectByAbsentPropertiesCommand;
 
-        public DelegateCommand<SelectArgs> AddToSelectionCommand
-            => _addToSelectionCommand ?? (_addToSelectionCommand = new DelegateCommand<SelectArgs>(AddToSelectionCommandExecute));
+        public DelegateCommand<bool?> SelectByAbsentPropertiesCommand
+            => _selectByAbsentPropertiesCommand ?? (_selectByAbsentPropertiesCommand = new DelegateCommand<bool?>(SelectByAbsentPropertiesCommandExecute));
 
-        private void AddToSelectionCommandExecute(SelectArgs args)
-            => Select(args, true);
+        private void SelectByAbsentPropertiesCommandExecute(bool? add)
+            => _maxToolsService.SelectByAbsentProperties(add ?? false);
 
         public class ValueChangedArgs
         {
@@ -117,6 +115,8 @@ namespace MaxToolsUi.ViewModels
 
         public bool HasNodeModels => NodeModels.Count > 0;
 
+        public bool HasPropertyEntries => PropertyEntries.Count > 0;
+
         private DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs> _addCommand;
 
         public DelegateCommand<AddPropertyEntryUC.AddCommandEventArgs> AddCommand
@@ -151,6 +151,7 @@ namespace MaxToolsUi.ViewModels
                     return new PropertyEntry(name, candidateValues, isGlobal);
                 }).OrderBy(p => p.Name);
             PropertyEntries.AddRange(propEntries);
+            RaisePropertyChanged(nameof(HasPropertyEntries));
         }
 
         public void SubscribeToEvents()

@@ -83,7 +83,7 @@
     <ManagedServices_dll>$(YearLibDir)ManagedServices.dll</ManagedServices_dll>
     <MaxPlusDotNet_dll>$(YearLibDir)MaxPlusDotNet.dll</MaxPlusDotNet_dll>
 
-    <YearOutDir>$(Here)out\$(Year)\</YearOutDir>
+    <YearOutDir>$(Here)out\$(Configuration)\</YearOutDir>
     <YearBinDir>$(YearOutDir)max-tools\</YearBinDir>
     <MaxToolsBootstrapFileName>bulk-edit.ms</MaxToolsBootstrapFileName>
   </PropertyGroup>

@@ -26,7 +26,8 @@
             Name="TextBoxName"
             Grid.Column="1"
             HorizontalAlignment="Stretch"
-            VerticalContentAlignment="Center" />
+            VerticalContentAlignment="Center"
+            CharacterCasing="Lower" />
         <TextBlock
             Grid.Column="2"
             HorizontalAlignment="Center"
@@ -39,7 +40,8 @@
             Name="TextBoxValue"
             Grid.Column="3"
             HorizontalAlignment="Stretch"
-            VerticalContentAlignment="Center" />
+            VerticalContentAlignment="Center"
+            CharacterCasing="Lower" />
         <Button
             Grid.Column="4"
             Width="45"

@@ -15,9 +15,15 @@ namespace MaxToolsUi.Models
             Properties.AddRange(properties);
         }
 
+        public bool HasProperty(string name, string value)
+            => Properties.Any(p => p.IsMatch(name, value));
+
+        public PropertyModel GetProperty(string name)
+            => Properties.FirstOrDefault(p => p.Name == name);
+
         public void AddProperty(string name, string value)
         {
-            var property = Properties.FirstOrDefault(p => p.Name == name);
+            var property = GetProperty(name);
             if (property == null)
             {
                 Properties.Add(new PropertyModel(name, value));
@@ -30,7 +36,7 @@ namespace MaxToolsUi.Models
 
         public void RemoveProperty(string name)
         {
-            var toRemove = Properties.FirstOrDefault(p => p.Name == name);
+            var toRemove = GetProperty(name);
             if (toRemove == null)
                 return;
             Properties.Remove(toRemove);

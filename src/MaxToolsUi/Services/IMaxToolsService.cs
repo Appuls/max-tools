@@ -5,26 +5,6 @@ using MaxToolsUi.Models;
 
 namespace MaxToolsUi.Services
 {
-    public enum OnInitializedBehavior
-    {
-        None,
-        ShowDialog,
-    }
-
-    public enum OnClosingBehavior
-    {
-        None,
-        Hide,
-    }
-
-    public class SelectionChangedEventArgs
-    {
-        public readonly IReadOnlyList<NodeModel> NodeModels;
-
-        public SelectionChangedEventArgs(IReadOnlyList<NodeModel> nodeModels)
-            => NodeModels = nodeModels ?? new List<NodeModel>();
-    }
-
     public interface IMaxToolsService
     {
         /// <summary>
@@ -58,10 +38,15 @@ namespace MaxToolsUi.Services
         void ObserveSelectionChanged(bool enabled);
 
         /// <summary>
-        /// Prompts the selection to be updated based on the given property info.
+        /// Updates the selection based on the given property info.
         /// </summary>
         void SelectByProperty(string name, string value, bool add);
-        
+
+        /// <summary>
+        /// Updates the selection with items that have no properties.
+        /// </summary>
+        void SelectByAbsentProperties(bool add);
+
         /// <summary>
         /// Refresh the current selection; invoked when the tool is activated.
         /// </summary>
@@ -76,5 +61,25 @@ namespace MaxToolsUi.Services
         /// Intended as a means to apply the state of the service's node models to the actual inodes in the selection.
         /// </summary>
         void ApplyNodeModels();
+    }
+
+    public enum OnInitializedBehavior
+    {
+        None,
+        ShowDialog,
+    }
+
+    public enum OnClosingBehavior
+    {
+        None,
+        Hide,
+    }
+
+    public class SelectionChangedEventArgs
+    {
+        public readonly IReadOnlyList<NodeModel> NodeModels;
+
+        public SelectionChangedEventArgs(IReadOnlyList<NodeModel> nodeModels)
+            => NodeModels = nodeModels ?? new List<NodeModel>();
     }
 }

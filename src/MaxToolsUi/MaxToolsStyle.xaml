@@ -6,6 +6,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <BooleanToVisibilityConverter x:Key="B2VC" />
     <conv:ParamBooleanConverter x:Key="PB2VC" />
+    <conv:EnumToBooleanConverter x:Key="E2BC" />
     <system:Boolean x:Key="True">True</system:Boolean>
     <system:Boolean x:Key="False">False</system:Boolean>
 
@@ -14,11 +15,19 @@
     <Color x:Key="ButtonMouseoverColor">#383838</Color>
     <Color x:Key="ButtonPressedColor">#496a83</Color>
     <Color x:Key="ButtonPressedRedColor">#d52020</Color>
+    <Color x:Key="ButtonDisabledBackgroundColor">#a5a5a5</Color>
+    <Color x:Key="ButtonDisabledForegroundColor">#444444</Color>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="ButtonBrush" Color="{StaticResource ButtonColor}" />
     <SolidColorBrush x:Key="ButtonMouseoverBrush" Color="{StaticResource ButtonMouseoverColor}" />
     <SolidColorBrush x:Key="ButtonPressedBrush" Color="{StaticResource ButtonPressedColor}" />
     <SolidColorBrush x:Key="ButtonPressedRedBrush" Color="{StaticResource ButtonPressedRedColor}" />
+    <SolidColorBrush x:Key="ButtonDisabledBackgroundBrush" Color="{StaticResource ButtonDisabledBackgroundColor}" />
+    <SolidColorBrush x:Key="ButtonDisabledForegroundBrush" Color="{StaticResource ButtonDisabledForegroundColor}" />
+
+    <Style x:Key="DefaultRadioButton" TargetType="{x:Type RadioButton}">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
 
     <Style x:Key="DefaultTextBlock" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="White" />
@@ -26,7 +35,8 @@
 
     <Style x:Key="SectionTextBlock" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
     <Style x:Key="ReadOnlyTextBox" TargetType="{x:Type TextBox}">
@@ -55,6 +65,10 @@
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background" Value="{StaticResource ButtonPressedBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource ButtonDisabledBackgroundBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource ButtonDisabledForegroundBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>

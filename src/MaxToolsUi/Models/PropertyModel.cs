@@ -18,5 +18,8 @@ namespace MaxToolsUi.Models
 
         public PropertyModel(string name, string value)
             => (Name, Value, OriginalValue) = (name, value, value);
+
+        public bool IsMatch(string name, string value)
+            => Name == name && (value == VariesCandidate || Value == value);
     }
 }

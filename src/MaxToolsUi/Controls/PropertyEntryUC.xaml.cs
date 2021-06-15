@@ -80,33 +80,18 @@ namespace MaxToolsUi.Controls
             set => SetValue(SelectCommandProperty, value);
         }
 
-        private MaxToolsWindowViewModel.SelectArgs GetSelectArgs()
-            => new MaxToolsWindowViewModel.SelectArgs(EntryName, GetCurrentValue());
+        private MaxToolsWindowViewModel.SelectArgs CreateSelectArgs(bool add)
+            => new MaxToolsWindowViewModel.SelectArgs(EntryName, GetCurrentValue(), add);
 
         private DelegateCommand<object> _innerSelectCommand;
 
         public DelegateCommand<object> InnerSelectCommand
             => _innerSelectCommand ?? (_innerSelectCommand = new DelegateCommand<object>(InnerSelectCommandExecute));
 
-        public void InnerSelectCommandExecute(object add)
+        public void InnerSelectCommandExecute(object addObj)
         {
-            if (add != null && add is bool b && b)
-            {
-                AddToSelectionCommand.Execute(GetSelectArgs());
-            }
-            else
-            {
-                SelectCommand.Execute(GetSelectArgs());
-            }
-        }
-
-        public static readonly DependencyProperty AddToSelectionCommandProperty
-            = DependencyProperty.Register(nameof(AddToSelectionCommand), typeof(ICommand), typeof(PropertyEntryUC));
-
-        public ICommand AddToSelectionCommand
-        {
-            get => (ICommand)GetValue(AddToSelectionCommandProperty);
-            set => SetValue(AddToSelectionCommandProperty, value);
+            var add = addObj != null && addObj is bool b && b;
+            SelectCommand.Execute(CreateSelectArgs(add));
         }
 
         public static readonly DependencyProperty ValueChangedCommandProperty

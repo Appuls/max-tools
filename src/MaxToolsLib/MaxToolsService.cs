@@ -117,8 +117,8 @@ namespace MaxToolsLib
             // Split each token.
             return lines.Select(l =>
             {
-                var tokens = l.Split(new []{ Separator }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToArray();
-                
+                var tokens = l.ToLowerInvariant().Split(new []{ Separator }, StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToArray();
+
                 switch (tokens.Length)
                 {
                     case 0:
@@ -149,7 +149,30 @@ namespace MaxToolsLib
             RunOnWpfThread(() => OnSelectionChanged?.Invoke(this, new SelectionChangedEventArgs(_nodeModels)));
         }
 
-        public void SelectByProperty(string name, string value, bool add)
+        /// <summary>
+        /// Returns all the child INodes recursively.
+        /// </summary>
+        public static IEnumerable<INode> GetAllChildren(INode node)
+        {
+            foreach (var childNode in node.Children)
+            {
+                yield return childNode;
+
+                var subChildren = GetAllChildren(childNode);
+                foreach (var subChild in subChildren)
+                {
+                    yield return subChild;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns all the INodes in the scene. Must be run on the Max Thread.
+        /// </summary>
+        public static IEnumerable<INode> GetAllNodes()
+            => GetAllChildren(Core.GetRootNode());
+
+        public Task SelectNodesByFilter(Func<INode, bool> filter, bool add)
             => RunOnMaxThread(() =>
             {
                 if (!add)
@@ -158,19 +181,30 @@ namespace MaxToolsLib
                 }
 
                 var nodeTab = new INodeTab();
-                foreach (var n in Core.GetRootNode().Children)
+                foreach (var n in GetAllNodes())
                 {
-                    var properties = GetProperties(n);
-                    if (properties == null)
-                        continue;
-
-                    if (properties.Any(p =>
-                        p.Name == name && (value == PropertyModel.VariesCandidate || p.Value == value)))
+                    if (filter(n))
+                    {
                         nodeTab.Append(n, false);
+                    }
                 }
 
                 SelectionManager.SelectNodes(nodeTab);
             });
+
+        public void SelectByProperty(string name, string value, bool add)
+            => SelectNodesByFilter(n =>
+            {
+                var properties = GetProperties(n);
+                return properties != null && properties.Any(p => p.IsMatch(name, value));
+            }, add);
+
+        public void SelectByAbsentProperties(bool add)
+            => SelectNodesByFilter(n =>
+            {
+                var properties = GetProperties(n);
+                return properties == null;
+            }, add);
 
         public void RefreshSelection()
             => RunOnMaxThread(HandleSelectionChanged);

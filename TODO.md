@@ -1,4 +1,5 @@
 # TODO
 
-- "(Unassigned)" or other string instead of asterisk
-- Selection does not consider hierarchies or groups; need to dig recursively into node children.
+- Confirm build automation for 2020-2022
+- Check whether group content is selected.
+- Get feedback
