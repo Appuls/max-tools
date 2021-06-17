@@ -183,7 +183,8 @@ namespace MaxToolsLib
                 var nodeTab = new INodeTab();
                 foreach (var n in GetAllNodes())
                 {
-                    if (filter(n))
+                    // Feature: we skip nodes that are hidden.
+                    if (!n.IsHidden() && filter(n))
                     {
                         nodeTab.Append(n, false);
                     }
