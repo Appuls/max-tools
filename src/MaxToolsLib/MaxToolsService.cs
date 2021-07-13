@@ -74,7 +74,6 @@ namespace MaxToolsLib
             );
         }
 
-
         public async void ObserveSelectionChanged(bool enabled)
         {
             if (enabled && _isObservingSelectionChanged)
@@ -134,7 +133,7 @@ namespace MaxToolsLib
         }
 
         public static WStr CreateWStr(IEnumerable<PropertyModel> propertyModels)
-            => new WStr(string.Join(LineSeparator, propertyModels.Select(p => $"{p.Name}{Separator}{p.Value}")));
+            => new WStr(string.Join(LineSeparator, propertyModels.Select(p => $"{p.Name} {Separator} {p.Value}")));
 
         public static void SetUserProperties(INode node, IEnumerable<PropertyModel> propertyModels)
             => node.SetUserPropBuffer(CreateWStr(propertyModels));
